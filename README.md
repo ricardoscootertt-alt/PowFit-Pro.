@@ -4,22 +4,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PowFit Pro | Sistema de Prescrição Elite</title>
     
-    <!-- Bibliotecas e Fontes -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Fontes -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     
     <style>
         :root {
+            /* Tema Masculino (Padrão) */
             --primary: #fbbf24;
             --bg-body: #0a0a0a;
             --bg-card: #141414;
             --text-main: #ffffff;
             --text-muted: #a1a1aa;
             --border: #27272a;
-            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.3s ease;
         }
 
         [data-theme="feminino"] {
+            /* Tema Feminino */
             --primary: #f472b6;
             --bg-body: #fff1f2;
             --bg-card: #ffffff;
@@ -36,207 +37,126 @@
             color: var(--text-main);
             transition: var(--transition);
             padding: 20px;
-            overflow-x: hidden;
         }
 
-        .container { max-width: 900px; margin: 0 auto; }
+        .container { max-width: 1000px; margin: 0 auto; }
 
-        header {
-            text-align: center;
-            padding: 60px 0;
-        }
+        header { text-align: center; padding: 40px 0; }
+        header h1 { font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--primary); font-weight: 900; font-style: italic; }
+        header p { letter-spacing: 4px; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; }
 
-        header h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 3.5rem;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: -2px;
-            font-weight: 900;
-            font-style: italic;
-        }
-
-        header p {
-            color: var(--text-muted);
-            letter-spacing: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        /* Form Card */
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 30px;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-            margin-bottom: 40px;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
         }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-        .form-group { margin-bottom: 20px; }
-        
-        label {
-            display: block;
-            font-size: 0.7rem;
-            font-weight: 700;
+        .section-title {
+            font-size: 0.8rem;
+            font-weight: 900;
             text-transform: uppercase;
-            margin-bottom: 8px;
-            color: var(--text-muted);
+            color: var(--primary);
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .form-group { margin-bottom: 15px; }
+        
+        label { display: block; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; color: var(--text-muted); }
 
         input, select {
-            width: 100%;
-            padding: 14px 18px;
-            background: rgba(255,255,255,0.05);
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            color: var(--text-main);
-            font-size: 0.95rem;
-            outline: none;
-            transition: var(--transition);
+            width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            border-radius: 10px; color: var(--text-main); font-size: 0.9rem; outline: none; transition: 0.3s;
         }
 
-        [data-theme="feminino"] input, 
-        [data-theme="feminino"] select {
-            background: #fff;
-            border-color: #fce7f3;
-            color: #1e293b;
+        [data-theme="feminino"] input, [data-theme="feminino"] select { background: #fff; color: #18181b; }
+
+        /* Módulo Personal */
+        .manual-selector {
+            display: none;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+            border: 1px solid var(--border);
+            padding: 15px;
+            border-radius: 10px;
         }
 
-        input:focus, select:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.1);
+        .exercise-category { margin-bottom: 20px; }
+        .category-name {
+            font-size: 0.6rem; background: var(--primary); color: #000; padding: 3px 8px;
+            border-radius: 4px; font-weight: 900; margin-bottom: 10px; display: inline-block;
         }
+
+        .exercise-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
+        .exercise-item {
+            display: flex; align-items: center; gap: 8px; font-size: 0.75rem;
+            background: rgba(255,255,255,0.03); padding: 8px; border-radius: 6px; cursor: pointer;
+        }
+        .exercise-item input { width: auto; }
 
         .btn {
-            width: 100%;
-            padding: 20px;
-            background: var(--primary);
-            color: #000;
-            border: none;
-            border-radius: 14px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 1rem;
-            margin-top: 10px;
+            width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; border-radius: 12px;
+            font-weight: 900; text-transform: uppercase; cursor: pointer; transition: 0.3s; font-size: 0.9rem;
         }
-
         [data-theme="feminino"] .btn { color: #fff; }
-        .btn:hover { transform: translateY(-3px); filter: brightness(1.1); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .btn:hover { filter: brightness(1.1); transform: translateY(-2px); }
 
-        /* Ficha A4 Styles (Hidden for UI, used for generation) */
-        #printable-sheet {
-            display: none; /* Só aparece no momento de gerar ou no preview */
-            background: white !important;
-            color: black !important;
-            width: 210mm;
-            min-height: 297mm;
-            padding: 20mm;
-            margin: 0 auto;
-            box-sizing: border-box;
-            position: relative;
+        /* Área de Visualização da Ficha (Tela) */
+        #preview-section { display: none; margin-top: 30px; }
+        
+        #sheet-container {
+            background: #fff; color: #000; padding: 20mm; width: 210mm; min-height: 297mm;
+            margin: 0 auto; box-shadow: 0 0 40px rgba(0,0,0,0.5);
         }
 
-        .sheet-header {
-            border-bottom: 4px solid #000;
-            padding-bottom: 15px;
-            margin-bottom: 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
+        /* Estilos da Ficha */
+        .sheet-header { border-bottom: 4px solid #000; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-end; }
+        .sheet-header h2 { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 900; font-style: italic; color: #000; margin: 0; }
+        
+        .patient-info { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; background: #f1f5f9; padding: 15px; border-radius: 8px; color: #000; }
+        .info-box b { display: block; font-size: 0.55rem; text-transform: uppercase; color: #64748b; }
+        .info-box span { font-weight: 800; color: #0f172a; font-size: 0.8rem; }
 
-        .sheet-header h2 { font-family: 'Playfair Display', serif; font-size: 2.8rem; font-weight: 900; font-style: italic; margin: 0; }
+        .workout-block { margin-bottom: 25px; page-break-inside: avoid; color: #000; }
+        .workout-title { background: #000; color: #fff; padding: 6px 15px; font-weight: 900; margin-bottom: 8px; font-size: 0.9rem; display: flex; justify-content: space-between; }
+        
+        table { width: 100%; border-collapse: collapse; color: #000; }
+        th { background: #e2e8f0; text-align: left; padding: 8px; border: 1px solid #cbd5e1; font-size: 0.6rem; text-transform: uppercase; }
+        td { padding: 8px; border: 1px solid #cbd5e1; font-size: 0.75rem; color: #334155; }
 
-        .patient-info {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 30px;
-            background: #f1f5f9;
-            padding: 15px;
-            border-radius: 8px;
-        }
-
-        .info-box b { display: block; font-size: 0.6rem; text-transform: uppercase; color: #64748b; }
-        .info-box span { font-weight: 800; color: #0f172a; font-size: 0.85rem; }
-
-        .workout-block { margin-bottom: 35px; page-break-inside: avoid; }
-        .workout-title {
-            background: #000;
-            color: #fff;
-            padding: 8px 15px;
-            font-weight: 900;
-            margin-bottom: 12px;
-            font-size: 1.1rem;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        table { width: 100%; border-collapse: collapse; }
-        th { background: #e2e8f0; text-align: left; padding: 10px; border: 1px solid #cbd5e1; font-size: 0.7rem; text-transform: uppercase; }
-        td { padding: 10px; border: 1px solid #cbd5e1; font-size: 0.85rem; color: #334155; }
-
-        .signature {
-            margin-top: 60px;
-            text-align: right;
-            border-top: 2px solid #000;
-            padding-top: 20px;
-        }
-
-        .signature b { font-size: 1.4rem; display: block; font-weight: 900; font-style: italic; }
-        .signature span { color: #64748b; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; }
+        .signature { margin-top: 40px; text-align: right; border-top: 2px solid #000; padding-top: 15px; color: #000; }
+        .signature b { font-size: 1.2rem; display: block; font-weight: 900; font-style: italic; }
 
         /* Loader */
         #loader {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            color: white;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 9999; justify-content: center; align-items: center; flex-direction: column;
         }
-
-        .spinner {
-            width: 60px; height: 60px;
-            border: 6px solid #1a1a1a;
-            border-top: 6px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s infinite linear;
-            margin-bottom: 20px;
-        }
-
+        .spinner { width: 50px; height: 50px; border: 5px solid #1a1a1a; border-top: 5px solid var(--primary); border-radius: 50%; animation: spin 1s infinite linear; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        #preview-section {
-            display: none;
-            margin-top: 40px;
-        }
-
-        .actions-group {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-bottom: 40px;
-        }
-
-        /* Ajuste para mobile viewing da ficha */
-        .sheet-container {
-            overflow-x: auto;
-            background: rgba(0,0,0,0.1);
-            padding: 20px 0;
+        /* CONFIGURAÇÃO DE IMPRESSÃO */
+        @media print {
+            body { background: #fff !important; padding: 0; margin: 0; }
+            .container > *:not(#preview-section) { display: none !important; }
+            #preview-section { margin: 0; padding: 0; display: block !important; }
+            .no-print { display: none !important; }
+            #sheet-container { box-shadow: none !important; margin: 0 !important; width: 100% !important; padding: 0 !important; }
+            @page { margin: 1cm; }
         }
 
         @media (max-width: 850px) {
-            header h1 { font-size: 2.5rem; }
-            #printable-sheet { width: 100%; padding: 10mm; min-height: auto; }
+            #sheet-container { width: 100%; padding: 10mm; min-height: auto; }
             .patient-info { grid-template-columns: 1fr 1fr; }
         }
     </style>
@@ -245,20 +165,31 @@
 
     <div id="loader">
         <div class="spinner"></div>
-        <p style="font-weight: 800; letter-spacing: 3px; font-size: 0.8rem;">SINCRO-BIOMECÂNICA ATIVA</p>
+        <p style="font-weight: 900; margin-top: 15px; letter-spacing: 2px; color: #fff;">SISTEMA ATIVO...</p>
     </div>
 
     <div class="container">
-        <header>
+        <header class="no-print">
             <h1>PowFit Pro</h1>
-            <p>SISTEMA DE PRESCRIÇÃO E ALTA PERFORMANCE</p>
+            <p>Gerador Profissional de Fichas de Treino</p>
         </header>
 
-        <section class="card">
-            <form id="workoutForm">
+        <section class="card no-print">
+            <div class="section-title">
+                <span>Dados do Usuário</span>
+                <div style="font-size: 0.6rem;">
+                    Módulo Personal: 
+                    <select id="mode" style="width: auto; padding: 2px 5px;" onchange="toggleManual()">
+                        <option value="auto">Automático</option>
+                        <option value="manual">Manual</option>
+                    </select>
+                </div>
+            </div>
+
+            <form id="mainForm">
                 <div class="grid">
                     <div class="form-group">
-                        <label>Nome do Aluno(a)</label>
+                        <label>Nome Completo</label>
                         <input type="text" id="name" placeholder="Ex: Maria Oliveira" required>
                     </div>
                     <div class="form-group">
@@ -270,9 +201,9 @@
                     </div>
                     <div class="form-group">
                         <label>Idade / Peso (kg)</label>
-                        <div style="display: flex; gap: 10px;">
-                            <input type="number" id="age" placeholder="Idade" required>
-                            <input type="number" id="weight" placeholder="Peso" required>
+                        <div style="display: flex; gap: 5px;">
+                            <input type="number" id="age" placeholder="Anos" required>
+                            <input type="number" id="weight" placeholder="Kg" required>
                         </div>
                     </div>
                 </div>
@@ -285,227 +216,168 @@
                             <option>Emagrecimento</option>
                             <option>Definição Muscular</option>
                             <option>Ganho de Força</option>
-                            <option>Saúde e Longevidade</option>
+                            <option>Saúde Geral</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Condição de Saúde</label>
+                        <label>Estado de Saúde</label>
                         <select id="health">
                             <option value="saudavel">Saudável</option>
-                            <option value="sedentario">Sedentário</option>
                             <option value="hipertensao">Hipertensão / Cardíaco</option>
-                            <option value="diabetes">Diabetes</option>
-                            <option value="joelho">Lesão no Joelho</option>
-                            <option value="lombar">Hérnia de Disco / Lombar</option>
+                            <option value="lesao_joelho">Lesão no Joelho</option>
+                            <option value="lesao_lombar">Hérnia / Lombar</option>
                             <option value="idoso">Idoso (Mobilidade)</option>
                             <option value="gestante">Gestante</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Frequência Semanal</label>
+                        <label>Frequência</label>
                         <select id="freq">
                             <option value="3">3 Dias (A-B-C)</option>
-                            <option value="6">6 Dias (A-B-C-A-B-C)</option>
+                            <option value="6">6 Dias (Semanal)</option>
                         </select>
                     </div>
                 </div>
 
-                <button type="submit" class="btn">Gerar Prescrição Inteligente</button>
+                <!-- Painel Manual -->
+                <div id="manualPanel" class="manual-selector">
+                    <div class="section-title"><span>Seleção Manual de Exercícios</span></div>
+                    <div id="exerciseCategories"></div>
+                </div>
+
+                <button type="submit" class="btn" style="margin-top: 20px;">Gerar Prévia da Ficha</button>
             </form>
         </section>
 
         <section id="preview-section">
-            <div class="actions-group">
-                <button class="btn" onclick="exportPDF()" style="max-width: 300px;">Download Ficha PDF (A4)</button>
-                <button class="btn" onclick="window.print()" style="max-width: 150px; background: #334155; color: white;">Imprimir</button>
+            <div class="no-print" style="text-align: center; margin-bottom: 20px;">
+                <button class="btn" onclick="window.print()" style="max-width: 300px;">🖨️ IMPRIMIR / SALVAR PDF</button>
+                <p style="font-size: 0.6rem; color: var(--text-muted); margin-top: 10px;">Dica: Selecione "Salvar como PDF" no destino da impressão.</p>
             </div>
             
-            <div class="sheet-container">
-                <div id="printable-sheet">
-                    <!-- Conteúdo será injetado aqui -->
-                </div>
+            <div id="sheet-container">
+                <!-- Conteúdo gerado -->
             </div>
         </section>
     </div>
 
     <script>
-        const EXERCISES_DB = {
-            PERNAS: ["Leg-press", "Hack", "Squat", "Smith", "Agachamento Livre", "Agachamento com Barra", "Cadeira extensora", "Adução", "Abdução", "Stiff", "Sumô", "Levantamento terra", "Levantamento Terra Sumô", "Elevação de Perna lateral", "Coice", "Cachorrinho", "Caranguejo", "Elevação pelvica", "Avanço", "Afundo", "Búlgaro"],
-            PEITO: ["Supino Reto", "Supino inclinado", "Suplino com Halteres", "Cross Over", "Crucifixo inclinado", "Pack Fly", "Poollover"],
-            COSTAS: ["Puxada Alta", "Remada Baixa", "Puxada Unilateral", "Serrote", "Pooldowm"],
-            BICEPS: ["Rosca Scot com barra", "Rosca scot com halteres", "Rosca scot unilateral", "Rosca direta", "Rosca 21", "Rosca Alternada", "Rosca no cross", "Rosca Martelo"],
-            TRICEPS: ["Triceps puley", "Triceps na Corda", "Triceps Coice", "Triceps Testa", "Triceps Francês"],
-            OMBROS: ["Elevação Frontal", "Desenvolvimento com halteres", "Desenvolvimento Arnold", "Elevação lateral", "Elevação borboleta", "Facepool"],
-            FUNCIONAL: ["Mobilidade de Quadril", "Prancha", "Caminhada Inclinada", "Agachamento Global"]
+        const EXERCISES = {
+            "PEITO": ["Supino Reto", "Supino inclinado", "Supino com Halteres", "Cross Over", "Crucifixo inclinado", "Pack Fly (Crucifixo Máquina)", "Pack Fly unilateral", "Poollover"],
+            "COSTAS": ["Puxada Alta", "Remada Baixa", "Puxada Unilateral", "Serrote", "Pooldowm"],
+            "PERNAS": ["Leg-press", "Hack", "Squat", "Smith", "Agachamento Livre", "Agachamento com Barra", "Mesa Flexora", "Cadeira Flexora", "Cadeira extensora", "Adução", "Abdução", "Stiff", "Sumô", "Levantamento terra", "Levantamento Terra Sumô"],
+            "GLÚTEO": ["Elevação de Perna lateral", "Elevação De quadril", "Coice", "Cachorrinho", "Caranguejo", "Elevação pelvica", "Avanço", "Afundo", "Búlgaro"],
+            "BRAÇOS": ["Rosca Scot com barra", "Rosca scot com halteres", "Rosca scot unilateral", "Rosca direta", "Rosca 21", "Rosca Alternada", "Rosca no cross", "Rosca Martelo", "Triceps puley", "Triceps na Corda", "Triceps Coice", "Triceps Testa", "Triceps Francês"],
+            "OMBROS": ["Elevação Frontal", "Desenvolvimento com halteres", "Desenvolvimento Arnold", "Elevação lateral", "Elevação Borboleta"],
+            "CÁRDIO": ["Bicicleta 10min", "Bicicleta 15min", "Bicicleta 20min", "Esteira 10min", "Esteira 15min", "Esteira 20min", "Pula Corda 5× de 30min"]
         };
 
-        const form = document.getElementById('workoutForm');
-        const loader = document.getElementById('loader');
-        const preview = document.getElementById('preview-section');
-        const sheet = document.getElementById('printable-sheet');
+        const categoriesDiv = document.getElementById('exerciseCategories');
+        for (const cat in EXERCISES) {
+            const div = document.createElement('div');
+            div.className = 'exercise-category';
+            div.innerHTML = `<div class="category-name">${cat}</div><div class="exercise-list">
+                ${EXERCISES[cat].map(ex => `<label class="exercise-item"><input type="checkbox" name="ex-sel" value="${ex}" data-cat="${cat}"> ${ex}</label>`).join('')}
+            </div>`;
+            categoriesDiv.appendChild(div);
+        }
 
-        form.addEventListener('submit', (e) => {
+        function toggleManual() {
+            document.getElementById('manualPanel').style.display = document.getElementById('mode').value === 'manual' ? 'block' : 'none';
+        }
+
+        document.getElementById('mainForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            loader.style.display = 'flex';
-
+            document.getElementById('loader').style.display = 'flex';
             setTimeout(() => {
-                const data = {
-                    name: document.getElementById('name').value,
-                    gender: document.getElementById('gender').value,
-                    age: document.getElementById('age').value,
-                    weight: document.getElementById('weight').value,
-                    goal: document.getElementById('goal').value,
-                    health: document.getElementById('health').value,
-                    freq: parseInt(document.getElementById('freq').value)
-                };
-
-                renderWorkout(data);
-                loader.style.display = 'none';
-                preview.style.display = 'block';
-                sheet.style.display = 'block';
-                
-                window.scrollTo({ top: preview.offsetTop - 20, behavior: 'smooth' });
-            }, 1200);
+                renderSheet();
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('preview-section').style.display = 'block';
+                window.scrollTo({ top: document.getElementById('preview-section').offsetTop - 20, behavior: 'smooth' });
+            }, 1000);
         });
 
-        function renderWorkout(data) {
-            let html = `
-                <div class="sheet-header">
-                    <div>
-                        <h2>POWFIT PRO</h2>
-                        <p style="font-size: 0.75rem; color: #444; font-weight: 700;">PRESCRIÇÃO TÉCNICA - LUCAS ANDRÉ PERSONAL</p>
-                    </div>
-                    <div style="text-align: right; font-size: 0.75rem; color: #444; font-weight: 600;">
-                        EMISSÃO: ${new Date().toLocaleDateString('pt-br')}
-                    </div>
-                </div>
-
-                <div class="patient-info">
-                    <div class="info-box"><b>Aluno(a)</b> <span>${data.name}</span></div>
-                    <div class="info-box"><b>Objetivo</b> <span>${data.goal}</span></div>
-                    <div class="info-box"><b>Condição</b> <span>${data.health.toUpperCase()}</span></div>
-                    <div class="info-box"><b>Género</b> <span>${data.gender.toUpperCase()}</span></div>
-                    <div class="info-box"><b>Idade / Peso</b> <span>${data.age}a / ${data.weight}kg</span></div>
-                    <div class="info-box"><b>Frequência</b> <span>${data.freq}x por semana</span></div>
-                </div>
-            `;
-
-            const dias = data.freq;
-            const isFem = data.gender === 'feminino';
-
-            for (let i = 0; i < dias; i++) {
-                const letra = ["A", "B", "C"][i % 3];
-                const foco = getFocusName(letra, isFem, data.health);
-                
-                html += `
-                    <div class="workout-block">
-                        <div class="workout-title">
-                            <span>TREINO ${letra}</span>
-                            <span style="font-size: 0.7rem; opacity: 0.8;">FOCO: ${foco}</span>
-                        </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th style="width: 45%;">Exercício</th>
-                                    <th style="width: 10%;">Séries</th>
-                                    <th style="width: 15%;">Reps</th>
-                                    <th style="width: 30%;">Observações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${getExercisesRows(letra, data)}
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-            }
-
-            html += `
-                <div class="signature">
-                    <p style="font-size: 0.7rem; color: #666; margin-bottom: 5px;">Documento assinado digitalmente por</p>
-                    <b>Lucas André</b>
-                    <span>Personal Trainer & Biomecanista</span>
-                </div>
-            `;
-
-            sheet.innerHTML = html;
-        }
-
-        function getFocusName(letra, isFem, health) {
-            if (health === 'idoso' || health === 'gestante') return "Qualidade de Vida e Mobilidade";
-            if (isFem) {
-                if (letra === 'A') return "Quadríceps e Glúteo 🍑";
-                if (letra === 'B') return "Superiores e Core";
-                return "Posterior e Glúteo Máximo 🍑";
-            } else {
-                if (letra === 'A') return "Empurrar (Peito/Ombro/Tríceps)";
-                if (letra === 'B') return "Puxar (Costas/Bíceps)";
-                return "Membros Inferiores Completos";
-            }
-        }
-
-        function getExercisesRows(letra, data) {
-            let pool = [];
-            const isFem = data.gender === 'feminino';
-
-            if (isFem) {
-                if (letra === 'A') pool = [...EXERCISES_DB.PERNAS.slice(0, 8), "Elevação pelvica"];
-                else if (letra === 'B') pool = [...EXERCISES_DB.PEITO.slice(0,3), ...EXERCISES_DB.COSTAS.slice(0,3), ...EXERCISES_DB.OMBROS.slice(0,3), "Prancha"];
-                else pool = [...EXERCISES_DB.PERNAS.slice(8), "Stiff", "Elevação pelvica", "Mesa Flexora"];
-            } else {
-                if (letra === 'A') pool = [...EXERCISES_DB.PEITO, ...EXERCISES_DB.OMBROS, ...EXERCISES_DB.TRICEPS];
-                else if (letra === 'B') pool = [...EXERCISES_DB.COSTAS, ...EXERCISES_DB.BICEPS];
-                else pool = [...EXERCISES_DB.PERNAS];
-            }
-
-            // Filtros de Lesão
-            if (data.health === 'joelho') pool = pool.filter(e => !["Agachamento Livre", "Afundo", "Búlgaro", "Avanço", "Hack"].includes(e));
-            if (data.health === 'lombar') pool = pool.filter(e => !["Levantamento terra", "Stiff", "Agachamento com Barra"].includes(e));
-            if (data.health === 'idoso' || data.health === 'gestante') pool = EXERCISES_DB.FUNCIONAL;
-
-            const selected = pool.sort(() => 0.5 - Math.random()).slice(0, 6);
-            
-            let s = "4", r = "12", o = "Descanso 60''";
-            if (data.goal === 'Ganho de Força') { s = "5"; r = "5"; o = "Descanso 3'"; }
-            if (data.health === 'hipertensao') { s = "3"; r = "20"; o = "Carga Leve / Sem Apneia"; }
-
-            return selected.map(ex => `
-                <tr>
-                    <td style="font-weight: 700;">${ex}</td>
-                    <td style="text-align: center;">${s}</td>
-                    <td style="text-align: center;">${r}</td>
-                    <td style="font-style: italic; color: #666; font-size: 0.75rem;">${o}</td>
-                </tr>
-            `).join('');
-        }
-
-        async function exportPDF() {
-            const element = document.getElementById('printable-sheet');
-            
-            // Forçamos largura fixa e visibilidade para o PDF não cortar
-            const opt = {
-                margin: [10, 10, 10, 10],
-                filename: `Ficha_PowFit_${document.getElementById('name').value.replace(/\s+/g, '_')}.pdf`,
-                image: { type: 'jpeg', quality: 1.0 },
-                html2canvas: { 
-                    scale: 3, 
-                    useCORS: true, 
-                    logging: false,
-                    scrollY: 0,
-                    scrollX: 0,
-                    width: 794 // 210mm a 96dpi
-                },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        function renderSheet() {
+            const container = document.getElementById('sheet-container');
+            const data = {
+                name: document.getElementById('name').value,
+                gender: document.getElementById('gender').value,
+                age: document.getElementById('age').value,
+                weight: document.getElementById('weight').value,
+                goal: document.getElementById('goal').value,
+                health: document.getElementById('health').value,
+                freq: parseInt(document.getElementById('freq').value),
+                mode: document.getElementById('mode').value
             };
 
-            try {
-                // Pequena espera para garantir que o DOM está pronto para o motor
-                await new Promise(resolve => setTimeout(resolve, 500));
-                await html2pdf().set(opt).from(element).save();
-            } catch (err) {
-                console.error("Erro na geração:", err);
-                alert("Houve um problema ao gerar o PDF. Tente usar o botão 'Imprimir' nativo.");
+            let workoutContent = "";
+            const isFem = data.gender === 'feminino';
+
+            if (data.mode === 'manual') {
+                const selected = Array.from(document.querySelectorAll('input[name="ex-sel"]:checked')).map(cb => ({ name: cb.value, cat: cb.dataset.cat }));
+                if (selected.length === 0) { alert("Selecione exercícios!"); document.getElementById('loader').style.display = 'none'; return; }
+                
+                workoutContent = `<div class="workout-block"><div class="workout-title">TREINO PERSONALIZADO</div><table><thead><tr><th>Exercício</th><th style="width:80px">Séries</th><th style="width:80px">Reps</th><th>Observações</th></tr></thead><tbody>
+                    ${selected.map(ex => `<tr><td><b>${ex.name}</b><br><small>${ex.cat}</small></td><td>4</td><td>12</td><td>Foco na técnica.</td></tr>`).join('')}
+                </tbody></table></div>`;
+            } else {
+                for (let i = 0; i < data.freq; i++) {
+                    const letra = ["A", "B", "C"][i % 3];
+                    workoutContent += `<div class="workout-block"><div class="workout-title"><span>TREINO ${letra}</span><span style="font-size:0.6rem">${getFoco(letra, isFem)}</span></div><table><thead><tr><th>Exercício</th><th style="width:80px">Séries</th><th style="width:80px">Reps</th><th>Observações</th></tr></thead><tbody>
+                        ${getRows(letra, data)}
+                    </tbody></table></div>`;
+                }
             }
+
+            container.innerHTML = `
+                <div class="sheet-header">
+                    <div><h2>POWFIT PRO</h2><p style="font-size:0.6rem; color:#444; font-weight:700">SISTEMA DE PRESCRIÇÃO - LUCAS ANDRÉ</p></div>
+                    <div style="text-align:right; font-size:0.7rem">EMISSÃO: ${new Date().toLocaleDateString('pt-br')}</div>
+                </div>
+                <div class="patient-info">
+                    <div class="info-box"><b>Aluno(a)</b><span>${data.name}</span></div>
+                    <div class="info-box"><b>Objetivo</b><span>${data.goal}</span></div>
+                    <div class="info-box"><b>Saúde</b><span>${data.health.toUpperCase()}</span></div>
+                    <div class="info-box"><b>Gênero</b><span>${data.gender.toUpperCase()}</span></div>
+                    <div class="info-box"><b>Idade</b><span>${data.age} anos</span></div>
+                    <div class="info-box"><b>Peso</b><span>${data.weight} kg</span></div>
+                </div>
+                ${workoutContent}
+                <div class="signature">
+                    <p style="font-size:0.6rem; color:#666">Prescrição feita por</p>
+                    <b>Lucas André | CREF: 008094-G/RN </b><span>Personal Trainer</span>
+                </div>`;
+        }
+
+        function getFoco(letra, isFem) {
+            if (isFem) {
+                if (letra === 'A') return "Quadríceps e Glúteo 🍑";
+                if (letra === 'B') return "Superiores e Abdômen";
+                return "Posterior e Glúteo Máximo 🍑";
+            }
+            if (letra === 'A') return "Peito, Ombros e Tríceps";
+            if (letra === 'B') return "Costas e Bíceps";
+            return "Membros Inferiores";
+        }
+
+        function getRows(letra, data) {
+            let pool = [];
+            const isFem = data.gender === 'feminino';
+            if (isFem) {
+                if (letra === 'A') pool = [...EXERCISES.PERNAS.slice(0, 6), "Elevação pelvica", "Afundo"];
+                else if (letra === 'B') pool = [...EXERCISES.PEITO.slice(0,2), ...EXERCISES.COSTAS.slice(0,2), ...EXERCISES.OMBROS.slice(0,2)];
+                else pool = [...EXERCISES.GLÚTEO, "Stiff", "Mesa Flexora"];
+            } else {
+                if (letra === 'A') pool = [...EXERCISES.PEITO, ...EXERCISES.OMBROS, "Triceps puley"];
+                else if (letra === 'B') pool = [...EXERCISES.COSTAS, "Rosca direta", "Rosca Martelo"];
+                else pool = EXERCISES.PERNAS;
+            }
+
+            if (data.health === 'lesao_joelho') pool = pool.filter(e => !["Agachamento Livre", "Afundo", "Búlgaro"].includes(e));
+            if (data.health === 'lesao_lombar') pool = pool.filter(e => !["Levantamento terra", "Stiff"].includes(e));
+
+            const sel = pool.sort(() => 0.5 - Math.random()).slice(0, 6);
+            return sel.map(ex => `<tr><td>${ex}</td><td>4</td><td>${data.goal === 'Hipertrofia' ? '8-12' : '15'}</td><td>Intervalo 60s.</td></tr>`).join('');
         }
     </script>
 </body>
