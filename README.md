@@ -287,7 +287,7 @@
     <script>
         const EXERCISES_DATABASE = {
             "PEITO": ["Supino Reto", "Supino inclinado", "Supino com Halteres", "Cross Over", "Crucifixo inclinado", "Pack Fly (Crucifixo Máquina)", "Pack Fly unilateral", "Poollover"],
-            "COSTAS": ["Puxada Alta", "Remada aberta", "Remada Baixa", "Remada Curvada", "Puxada Unilateral", "Serrote", "Pooldowm", "Facepool"],
+            "COSTAS": ["Puxada Alta", "Remada aberta", "Remada Baixa", "Remada Curvada", "Puxada Unilateral", "Serrote", "Pooldowm", "Facepull"],
             "PERNAS": ["Leg-press", "Hack", "Squat", "Smith", "Agachamento Livre", "Agachamento com Barra", "Mesa Flexora", "Cadeira Flexora", "Cadeira extensora", "Adução", "Abdução", "Stiff", "Sumô", "Levantamento terra", "Levantamento Terra Sumô"],
             "GLÚTEO": ["Elevação de Perna lateral", "Elevação De quadril", "Coice", "Cachorrinho", "Caranguejo", "Elevação pelvica", "Avanço", "Afundo", "Búlgaro", "Panturrilha Banco", "Panturrilha squat"],
             "BRAÇOS": ["Rosca Scot com barra", "Rosca scot com halteres", "Rosca scot unilateral", "Rosca direta", "Rosca 21", "Rosca Alternada", "Rosca no cross", "Rosca Martelo", "Triceps puley", "Triceps na Corda", "Triceps Coice", "Triceps Testa", "Triceps Francês"],
