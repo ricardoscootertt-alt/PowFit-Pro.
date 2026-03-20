@@ -2,18 +2,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PowFit Pro | Consultoria Esportiva</title>
+    <title>PowFit Pro | Sistema de Prescrição Profissional</title>
+    
+    <!-- Fontes -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --primary: #fbbf24;
             --bg-body: #0a0a0a;
-            --bg-card: #121212;
+            --bg-card: #141414;
             --text-main: #ffffff;
             --text-muted: #a1a1aa;
             --border: #27272a;
-            --input-bg: #1c1c1f;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         [data-theme="feminino"] {
@@ -23,7 +25,6 @@
             --text-main: #18181b;
             --text-muted: #71717a;
             --border: #fbcfe8;
-            --input-bg: #fdf2f8;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -32,491 +33,420 @@
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-body);
             color: var(--text-main);
-            transition: background 0.4s, color 0.4s;
-            line-height: 1.5;
+            transition: var(--transition);
             padding: 10px;
+            line-height: 1.4;
         }
 
-        .container { max-width: 600px; margin: 0 auto; }
+        .container { max-width: 100%; margin: 0 auto; }
 
         /* Header */
         header { text-align: center; padding: 30px 0; }
-        header h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--primary); font-style: italic; margin-bottom: 5px; }
-        header p { text-transform: uppercase; letter-spacing: 3px; font-size: 0.65rem; color: var(--text-muted); font-weight: 700; }
+        header h1 { 
+            font-family: 'Playfair Display', serif; 
+            font-size: 2.5rem; 
+            color: var(--primary); 
+            font-weight: 900; 
+            font-style: italic;
+            line-height: 1;
+        }
+        header p { letter-spacing: 3px; font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; margin-top: 5px; }
 
-        /* Card Principal */
+        /* Card de Formulário */
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 20px;
             padding: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             margin-bottom: 20px;
         }
 
-        .section-header {
+        .section-title {
+            font-size: 0.75rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            border-left: 4px solid var(--primary);
-            padding-left: 12px;
         }
 
-        .section-header h2 { font-size: 0.9rem; text-transform: uppercase; font-weight: 900; }
+        .grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        @media (min-width: 600px) { .grid { grid-template-columns: repeat(3, 1fr); } }
 
-        /* Forms */
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
-        
+        .form-group { margin-bottom: 12px; }
+        label { display: block; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; color: var(--text-muted); }
+
         input, select {
-            width: 100%;
-            padding: 12px;
-            background: var(--input-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            color: var(--text-main);
-            font-size: 0.95rem;
-            outline: none;
-            transition: border-color 0.3s;
+            width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            border-radius: 10px; color: var(--text-main); font-size: 0.9rem; outline: none; transition: 0.3s;
         }
-        input:focus { border-color: var(--primary); }
+
+        [data-theme="feminino"] input, [data-theme="feminino"] select { background: #fff; color: #18181b; }
+
+        /* Painel Manual de Exercícios */
+        .manual-selector {
+            display: none;
+            margin-top: 15px;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 15px;
+            background: rgba(0,0,0,0.1);
+        }
+
+        .exercise-category { margin-bottom: 25px; }
+        .category-name {
+            font-size: 0.6rem; background: var(--primary); color: #000; padding: 4px 10px;
+            border-radius: 4px; font-weight: 900; margin-bottom: 12px; display: inline-block;
+        }
+
+        .exercise-item-row {
+            display: flex;
+            flex-direction: column;
+            background: rgba(255,255,255,0.03);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .ex-info { font-size: 0.8rem; font-weight: 600; margin-bottom: 8px; }
+        .day-selection { display: flex; gap: 5px; overflow-x: auto; padding-bottom: 5px; }
+        
+        .day-chip {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--border);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            cursor: pointer;
+        }
+
+        .day-chip input { width: auto; height: auto; }
+        .day-chip.active { background: var(--primary); color: #000; }
 
         .btn {
-            width: 100%;
-            padding: 16px;
-            background: var(--primary);
-            color: #000;
-            border: none;
-            border-radius: 12px;
-            font-weight: 900;
-            text-transform: uppercase;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: transform 0.2s, filter 0.2s;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            width: 100%; padding: 16px; background: var(--primary); color: #000; border: none; border-radius: 12px;
+            font-weight: 900; text-transform: uppercase; cursor: pointer; transition: 0.3s; font-size: 0.85rem;
         }
         [data-theme="feminino"] .btn { color: #fff; }
         .btn:active { transform: scale(0.98); }
 
-        /* Painel do Personal (Manual) */
-        .manual-panel {
-            display: none;
-            margin-top: 15px;
-            background: rgba(0,0,0,0.05);
-            border-radius: 15px;
-            padding: 15px;
-            border: 1px dashed var(--border);
-        }
-
-        .day-selector {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-
-        .day-btn {
-            flex: 0 0 50px;
-            height: 50px;
-            background: var(--input-bg);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-            cursor: pointer;
-        }
-
-        .day-btn.active {
-            background: var(--primary);
-            color: #000;
-            border-color: var(--primary);
-        }
-
-        .exercise-search-box {
-            max-height: 350px;
-            overflow-y: auto;
-            border-radius: 10px;
-            padding-right: 5px;
-        }
-
-        .exercise-cat-group { margin-bottom: 15px; }
-        .exercise-cat-title { font-size: 0.6rem; font-weight: 900; background: var(--border); padding: 4px 8px; border-radius: 4px; margin-bottom: 8px; }
-        
-        .exercise-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px;
-            background: var(--input-bg);
-            margin-bottom: 5px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-        }
-        .exercise-row input { width: auto; }
-
-        /* Preview da Ficha */
+        /* Ficha Técnica (A4 Visual) */
         #preview-section { display: none; margin-top: 20px; }
-
-        /* Estilo da Ficha (Para Impressão e Preview) */
-        #printable-ficha {
-            background: white !important;
-            color: black !important;
-            padding: 15mm;
-            width: 210mm; /* A4 width */
-            min-height: 297mm;
-            margin: 0 auto;
-            box-sizing: border-box;
+        
+        #sheet-content {
+            background: #fff; color: #000; padding: 15mm; width: 100%; max-width: 210mm;
+            margin: 0 auto; box-shadow: 0 0 20px rgba(0,0,0,0.2);
         }
 
-        .ficha-header { border-bottom: 3px solid #000; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-end; }
-        .ficha-header h2 { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 900; color: #000; }
+        .sheet-header { border-bottom: 3px solid #000; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-end; }
+        .sheet-header h2 { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 900; font-style: italic; color: #000; margin: 0; }
         
-        .aluno-info { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; background: #f3f4f6; padding: 12px; border-radius: 8px; }
-        .aluno-info div b { display: block; font-size: 0.55rem; text-transform: uppercase; color: #6b7280; }
-        .aluno-info div span { font-weight: 800; font-size: 0.8rem; color: #000; }
+        .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; background: #f8fafc; padding: 12px; border-radius: 6px; }
+        .info-box b { display: block; font-size: 0.5rem; text-transform: uppercase; color: #64748b; }
+        .info-box span { font-weight: 800; color: #0f172a; font-size: 0.75rem; }
 
-        .treino-box { margin-bottom: 25px; page-break-inside: avoid; }
-        .treino-title { background: #000; color: #fff; padding: 6px 12px; font-weight: 900; font-size: 0.9rem; margin-bottom: 10px; }
+        .workout-day { margin-bottom: 25px; page-break-inside: avoid; }
+        .day-title { background: #000; color: #fff; padding: 6px 12px; font-weight: 900; margin-bottom: 6px; font-size: 0.8rem; display: flex; justify-content: space-between; }
         
-        table { width: 100%; border-collapse: collapse; }
-        th { background: #e5e7eb; padding: 8px; font-size: 0.6rem; text-transform: uppercase; border: 1px solid #d1d5db; text-align: left; }
-        td { padding: 8px; font-size: 0.75rem; border: 1px solid #d1d5db; color: #374151; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 5px; }
+        th { background: #f1f5f9; text-align: left; padding: 8px; border: 1px solid #cbd5e1; font-size: 0.55rem; text-transform: uppercase; }
+        td { padding: 8px; border: 1px solid #cbd5e1; font-size: 0.7rem; color: #334155; }
 
-        .signature { margin-top: 40px; text-align: right; border-top: 2px solid #000; padding-top: 15px; }
-        .signature b { font-size: 1.1rem; display: block; }
-        .signature p { font-size: 0.75rem; font-weight: 600; color: #4b5563; }
+        .footer { margin-top: 40px; text-align: right; border-top: 2px solid #000; padding-top: 15px; color: #000; }
+        .footer b { font-size: 1.1rem; display: block; font-weight: 900; font-style: italic; }
+        .footer p { font-size: 0.7rem; font-weight: 700; color: #334155; }
 
         /* Loader */
-        #loading {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9);
-            z-index: 100; flex-direction: column; align-items: center; justify-content: center;
+        #loader {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center; flex-direction: column;
         }
-        .spin { width: 40px; height: 40px; border: 4px solid #222; border-top-color: var(--primary); border-radius: 50%; animation: rot 1s infinite linear; }
-        @keyframes rot { to { transform: rotate(360deg); } }
+        .spin { width: 40px; height: 40px; border: 4px solid #1a1a1a; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s infinite linear; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Mobile View Fix */
-        .ficha-scroll { overflow-x: auto; background: #222; padding: 10px; border-radius: 10px; }
-
+        /* PRINT SETTINGS */
         @media print {
-            body { background: white !important; padding: 0; }
-            .container > *:not(#preview-section) { display: none !important; }
-            #preview-section { display: block !important; margin: 0; padding: 0; }
+            body { background: #fff !important; padding: 0; margin: 0; }
             .no-print { display: none !important; }
-            #printable-ficha { width: 100% !important; box-shadow: none !important; margin: 0 !important; }
-            @page { margin: 0.5cm; }
+            #preview-section { display: block !important; margin: 0 !important; }
+            #sheet-content { box-shadow: none !important; width: 100% !important; max-width: none !important; padding: 10mm !important; }
+            @page { size: A4; margin: 0; }
         }
     </style>
 </head>
 <body>
 
-    <div id="loading">
+    <div id="loader">
         <div class="spin"></div>
-        <p style="color: white; margin-top: 15px; font-weight: 800; font-size: 0.7rem; letter-spacing: 2px;">PROCESSANDO DADOS...</p>
+        <p style="margin-top: 15px; font-weight: 900; font-size: 0.6rem; color: #fff; letter-spacing: 2px;">PROCESSANDO...</p>
     </div>
 
-    <div class="container">
-        <header class="no-print">
+    <div class="container no-print">
+        <header>
             <h1>PowFit Pro</h1>
-            <p>High Performance Training</p>
+            <p>High Performance Systems</p>
         </header>
 
-        <section class="card no-print">
-            <div class="section-header">
-                <h2>Perfil do Aluno</h2>
-                <select id="creationMode" style="width: auto; padding: 4px 8px; font-size: 0.65rem;" onchange="updateMode()">
-                    <option value="auto">Geração Automática</option>
-                    <option value="manual">Modo Personal (Manual)</option>
+        <section class="card">
+            <div class="section-title">
+                <span>Dados do Aluno</span>
+                <select id="creationMode" style="width: auto; padding: 4px; font-size: 0.6rem;" onchange="updateMode()">
+                    <option value="auto">Automático</option>
+                    <option value="manual">Módulo Personal</option>
                 </select>
             </div>
 
             <form id="trainerForm">
-                <div class="form-group">
-                    <label>Nome do Atleta</label>
-                    <input type="text" id="userName" placeholder="Nome completo" required>
-                </div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div class="grid">
                     <div class="form-group">
-                        <label>Género</label>
+                        <label>Nome Completo</label>
+                        <input type="text" id="userName" placeholder="Nome do aluno" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Gênero</label>
                         <select id="userGender" onchange="document.body.setAttribute('data-theme', this.value)">
                             <option value="masculino">Masculino</option>
                             <option value="feminino">Feminino</option>
                         </select>
                     </div>
                     <div class="form-group">
+                        <label>Idade / Peso</label>
+                        <div style="display: flex; gap: 5px;">
+                            <input type="number" id="userAge" placeholder="Idade" required>
+                            <input type="number" id="userWeight" placeholder="Kg" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid">
+                    <div class="form-group">
+                        <label>Objetivo</label>
+                        <select id="userGoal">
+                            <option>Hipertrofia</option>
+                            <option>Emagrecimento</option>
+                            <option>Definição</option>
+                            <option>Ganho de Força</option>
+                            <option>Condicionamento</option>
+                            <option>Reabilitação</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Estado de Saúde</label>
+                        <select id="userHealth">
+                            <option value="saudavel">Saudável</option>
+                            <option value="hipertensao">Hipertensão / Cardíaco</option>
+                            <option value="diabetes">Diabetes</option>
+                            <option value="joelho">Lesão Joelho</option>
+                            <option value="lombar">Lesão Lombar / Hérnia</option>
+                            <option value="idoso">Idoso (Mobilidade)</option>
+                            <option value="gestante">Gestante / Lactante</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label>Frequência</label>
-                        <select id="userFreq" onchange="updateManualDays()">
+                        <select id="userFreq" onchange="updateDayChips()">
                             <option value="3">3 Dias (A-B-C)</option>
-                            <option value="6">6 Dias (A ao F)</option>
+                            <option value="5">5 Dias</option>
+                            <option value="6">6 Dias</option>
                         </select>
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div class="form-group">
-                        <label>Idade</label>
-                        <input type="number" id="userAge" value="25" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Peso (kg)</label>
-                        <input type="number" id="userWeight" value="75" required>
-                    </div>
+                <!-- Painel de Seleção Personal -->
+                <div id="manualPanel" class="manual-selector">
+                    <div class="section-title"><span>Prescrição Dinâmica</span></div>
+                    <div id="exerciseListContainer"></div>
                 </div>
 
-                <div class="form-group">
-                    <label>Objetivo</label>
-                    <select id="userGoal">
-                        <option>Hipertrofia</option>
-                        <option>Emagrecimento</option>
-                        <option>Definição Muscular</option>
-                        <option>Ganho de Força</option>
-                        <option>Saúde Geral</option>
-                        <option>Reabilitação</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Estado de Saúde / Limitações</label>
-                    <select id="userHealth">
-                        <option value="Saudável">Saudável</option>
-                        <option value="Hipertensão">Hipertensão</option>
-                        <option value="Diabetes">Diabetes</option>
-                        <option value="Lesão no Joelho">Lesão no Joelho</option>
-                        <option value="Lesão Lombar">Lesão Lombar / Hérnia</option>
-                        <option value="Idoso">Idoso</option>
-                        <option value="Gestante">Gestante</option>
-                    </select>
-                </div>
-
-                <!-- Painel Manual -->
-                <div id="manualPanel" class="manual-panel">
-                    <label style="color: var(--primary)">Definir Exercícios por Dia:</label>
-                    <div class="day-selector" id="daySelector">
-                        <!-- Botões de dias injetados -->
-                    </div>
-                    
-                    <div class="exercise-search-box" id="exerciseSearchBox">
-                        <!-- Listas de exercícios injetadas -->
-                    </div>
-                </div>
-
-                <button type="submit" class="btn" style="margin-top: 10px;">Gerar Ficha de Treino</button>
+                <button type="submit" class="btn" style="margin-top: 20px;">Gerar Ficha de Treino</button>
             </form>
-        </section>
-
-        <section id="preview-section">
-            <div class="no-print" style="margin-bottom: 20px;">
-                <button class="btn" onclick="window.print()">🖨️ Imprimir / Baixar PDF</button>
-                <button class="btn" style="background: transparent; border: 1px solid var(--primary); color: var(--primary); margin-top: 10px;" onclick="document.getElementById('preview-section').style.display='none'">Editar Dados</button>
-            </div>
-
-            <div class="ficha-scroll">
-                <div id="printable-ficha">
-                    <!-- Conteúdo dinâmico da ficha -->
-                </div>
-            </div>
         </section>
     </div>
 
+    <!-- Seção de Visualização e Impressão -->
+    <section id="preview-section">
+        <div class="no-print" style="padding: 15px; text-align: center;">
+            <button class="btn" style="max-width: 320px;" onclick="window.print()">🖨️ IMPRIMIR / SALVAR PDF</button>
+            <p style="font-size: 0.6rem; color: #888; margin-top: 10px;">Selecione "Salvar como PDF" no destino da impressão para baixar o arquivo.</p>
+        </div>
+        
+        <div id="sheet-content">
+            <!-- Gerado via JavaScript -->
+        </div>
+    </section>
+
     <script>
-        const EXERCISES_DB = {
+        const EXERCISES_DATABASE = {
             "PEITO": ["Supino Reto", "Supino inclinado", "Supino com Halteres", "Cross Over", "Crucifixo inclinado", "Pack Fly (Crucifixo Máquina)", "Pack Fly unilateral", "Poollover"],
-            "COSTAS": ["Puxada Alta", "Remada Baixa", "Puxada Unilateral", "Serrote", "Pooldowm"],
+            "COSTAS": ["Puxada Alta", "Remada aberta", "Remada Baixa", "Remada Curvada", "Puxada Unilateral", "Serrote", "Pooldowm", "Facepool"],
             "PERNAS": ["Leg-press", "Hack", "Squat", "Smith", "Agachamento Livre", "Agachamento com Barra", "Mesa Flexora", "Cadeira Flexora", "Cadeira extensora", "Adução", "Abdução", "Stiff", "Sumô", "Levantamento terra", "Levantamento Terra Sumô"],
-            "GLÚTEO": ["Elevação de Perna lateral", "Elevação De quadril", "Coice", "Cachorrinho", "Caranguejo", "Elevação pelvica", "Avanço", "Afundo", "Búlgaro", "Panturrilha"],
+            "GLÚTEO": ["Elevação de Perna lateral", "Elevação De quadril", "Coice", "Cachorrinho", "Caranguejo", "Elevação pelvica", "Avanço", "Afundo", "Búlgaro", "Panturrilha Banco", "Panturrilha squat"],
             "BRAÇOS": ["Rosca Scot com barra", "Rosca scot com halteres", "Rosca scot unilateral", "Rosca direta", "Rosca 21", "Rosca Alternada", "Rosca no cross", "Rosca Martelo", "Triceps puley", "Triceps na Corda", "Triceps Coice", "Triceps Testa", "Triceps Francês"],
             "OMBROS": ["Elevação Frontal", "Desenvolvimento com halteres", "Desenvolvimento Arnold", "Elevação lateral", "Elevação Borboleta"],
-            "CÁRDIO": ["Bicicleta 10min", "Bicicleta 15min", "Bicicleta 20min", "Esteira 10min", "Esteira 15min", "Esteira 20min", "Pula Corda 5× de 30min"]
+            "ABDOMEN": ["Abdôminal Infra", "Abdôminal remador", "Abdôminal Prancha 5× de 30seg"],
+            "CÁRDIO": ["Bicicleta 10min", "Bicicleta 15min", "Bicicleta 20min", "Esteira 10min", "Esteira 15min", "Esteira 20min", "Pula Corda 5× de 30seg"]
         };
-
-        let manualSelections = { "A": [], "B": [], "C": [], "D": [], "E": [], "F": [] };
-        let currentDay = "A";
 
         function updateMode() {
             const mode = document.getElementById('creationMode').value;
             document.getElementById('manualPanel').style.display = (mode === 'manual') ? 'block' : 'none';
-            if (mode === 'manual') updateManualDays();
+            if(mode === 'manual') renderManualList();
         }
 
-        function updateManualDays() {
+        function updateDayChips() {
+            if(document.getElementById('creationMode').value === 'manual') renderManualList();
+        }
+
+        function renderManualList() {
+            const container = document.getElementById('exerciseListContainer');
             const freq = parseInt(document.getElementById('userFreq').value);
-            const selector = document.getElementById('daySelector');
-            selector.innerHTML = '';
-            const days = freq === 3 ? ["A", "B", "C"] : ["A", "B", "C", "D", "E", "F"];
-            
-            days.forEach(day => {
-                const btn = document.createElement('div');
-                btn.className = `day-btn ${day === currentDay ? 'active' : ''}`;
-                btn.innerText = day;
-                btn.onclick = () => { currentDay = day; updateManualDays(); renderExerciseList(); };
-                selector.appendChild(btn);
-            });
-            renderExerciseList();
-        }
+            container.innerHTML = "";
 
-        function renderExerciseList() {
-            const box = document.getElementById('exerciseSearchBox');
-            box.innerHTML = '';
-            
-            for (const cat in EXERCISES_DB) {
-                const group = document.createElement('div');
-                group.className = 'exercise-cat-group';
-                group.innerHTML = `<div class="exercise-cat-title">${cat}</div>`;
+            for (const cat in EXERCISES_DATABASE) {
+                const catDiv = document.createElement('div');
+                catDiv.className = 'exercise-category';
+                catDiv.innerHTML = `<div class="category-name">${cat}</div>`;
                 
-                EXERCISES_DB[cat].forEach(ex => {
-                    const row = document.createElement('label');
-                    row.className = 'exercise-row';
-                    const checked = manualSelections[currentDay].includes(ex) ? 'checked' : '';
-                    row.innerHTML = `
-                        <input type="checkbox" ${checked} onchange="toggleExercise('${ex}')">
-                        <span>${ex}</span>
-                    `;
-                    group.appendChild(row);
-                });
-                box.appendChild(group);
-            }
-        }
+                EXERCISES_DATABASE[cat].forEach(ex => {
+                    const row = document.createElement('div');
+                    row.className = 'exercise-item-row';
+                    
+                    let chips = "";
+                    for(let d=1; d <= freq; d++) {
+                        chips += `
+                            <label class="day-chip" id="chip-${ex}-${d}">
+                                <input type="checkbox" name="manual-ex" value="${ex}" data-day="${d}" onchange="this.parentElement.classList.toggle('active', this.checked)">
+                                D${d}
+                            </label>
+                        `;
+                    }
 
-        function toggleExercise(ex) {
-            const index = manualSelections[currentDay].indexOf(ex);
-            if (index > -1) manualSelections[currentDay].splice(index, 1);
-            else manualSelections[currentDay].push(ex);
+                    row.innerHTML = `
+                        <div class="ex-info">${ex}</div>
+                        <div class="day-selection">${chips}</div>
+                    `;
+                    catDiv.appendChild(row);
+                });
+                container.appendChild(catDiv);
+            }
         }
 
         document.getElementById('trainerForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            document.getElementById('loading').style.display = 'flex';
+            document.getElementById('loader').style.display = 'flex';
             
             setTimeout(() => {
-                generateSheet();
-                document.getElementById('loading').style.display = 'none';
+                const data = {
+                    name: document.getElementById('userName').value,
+                    gender: document.getElementById('userGender').value,
+                    age: document.getElementById('userAge').value,
+                    weight: document.getElementById('userWeight').value,
+                    goal: document.getElementById('userGoal').value,
+                    health: document.getElementById('userHealth').value,
+                    freq: parseInt(document.getElementById('userFreq').value),
+                    mode: document.getElementById('creationMode').value
+                };
+
+                renderSheet(data);
+                document.getElementById('loader').style.display = 'none';
                 document.getElementById('preview-section').style.display = 'block';
                 window.scrollTo({ top: document.getElementById('preview-section').offsetTop - 20, behavior: 'smooth' });
             }, 1000);
         });
 
-        function generateSheet() {
-            const container = document.getElementById('printable-ficha');
-            const mode = document.getElementById('creationMode').value;
-            const user = {
-                name: document.getElementById('userName').value,
-                gender: document.getElementById('userGender').value,
-                age: document.getElementById('userAge').value,
-                weight: document.getElementById('userWeight').value,
-                goal: document.getElementById('userGoal').value,
-                health: document.getElementById('userHealth').value,
-                freq: parseInt(document.getElementById('userFreq').value)
-            };
+        function renderSheet(data) {
+            const sheet = document.getElementById('sheet-content');
+            let workoutHTML = "";
+            const labels = ["A", "B", "C", "D", "E", "F"];
 
-            let treinosHTML = "";
-            const diasList = user.freq === 3 ? ["A", "B", "C"] : ["A", "B", "C", "D", "E", "F"];
+            if(data.mode === 'manual') {
+                const checks = Array.from(document.querySelectorAll('input[name="manual-ex"]:checked'));
+                if(checks.length === 0) { alert("Selecione os dias para os exercícios!"); document.getElementById('loader').style.display = 'none'; return; }
 
-            diasList.forEach(dia => {
-                let exercicios = [];
-                if (mode === 'manual') {
-                    exercicios = manualSelections[dia];
-                } else {
-                    exercicios = getAutoExercises(dia, user);
+                for(let d=1; d <= data.freq; d++) {
+                    const dailyEx = checks.filter(c => parseInt(c.dataset.day) === d);
+                    if(dailyEx.length > 0) {
+                        workoutHTML += `<div class="workout-day"><div class="day-title">DIA ${d} - PRESCRIÇÃO PERSONALIZADA</div><table><thead><tr><th>Exercício</th><th style="width:50px">Séries</th><th style="width:70px">Reps</th><th>Observações</th></tr></thead><tbody>
+                            ${dailyEx.map(c => `<tr><td>${c.value}</td><td>4</td><td>12</td><td>Execução focada.</td></tr>`).join('')}
+                        </tbody></table></div>`;
+                    }
                 }
-
-                if (exercicios.length > 0) {
-                    treinosHTML += `
-                        <div class="treino-box">
-                            <div class="treino-title">TREINO ${dia} - ${getFoco(dia, user)}</div>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Exercício</th>
-                                        <th style="width: 60px;">Séries</th>
-                                        <th style="width: 80px;">Reps.</th>
-                                        <th>Observações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${exercicios.map(ex => `
-                                        <tr>
-                                            <td style="font-weight: 700;">${ex}</td>
-                                            <td style="text-align: center;">${user.goal === 'Força' ? '5' : '4'}</td>
-                                            <td style="text-align: center;">${user.goal === 'Hipertrofia' ? '8-12' : '15'}</td>
-                                            <td style="font-size: 0.65rem; font-style: italic; color: #666;">Descanso 60s. Controle a cadência.</td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        </div>
-                    `;
+            } else {
+                // Auto Mode com Inteligência de Gênero
+                const isFem = data.gender === 'feminino';
+                for(let i=0; i < data.freq; i++) {
+                    const dia = i + 1;
+                    const letra = labels[i % 3];
+                    workoutHTML += `<div class="workout-day"><div class="day-title"><span>DIA ${dia} - TREINO ${letra}</span><span style="font-size:0.55rem">${getFoco(letra, isFem)}</span></div><table><thead><tr><th>Exercício</th><th style="width:50px">Séries</th><th style="width:70px">Reps</th><th>Observações</th></tr></thead><tbody>
+                        ${getAutoRows(letra, data)}
+                    </tbody></table></div>`;
                 }
-            });
+            }
 
-            container.innerHTML = `
-                <div class="ficha-header">
-                    <div>
-                        <h2>POWFIT PRO</h2>
-                        <p style="font-size: 0.6rem; color: #444; font-weight: 800;">CONSULTORIA ESPORTIVA ESPECIALIZADA</p>
-                    </div>
-                    <div style="text-align: right; font-size: 0.7rem; color: #000;">
-                        DATA: ${new Date().toLocaleDateString('pt-br')}
-                    </div>
+            sheet.innerHTML = `
+                <div class="sheet-header">
+                    <div><h2>POWFIT PRO</h2><p style="font-size:0.5rem; color:#444; font-weight:800">SISTEMA DE PRESCRIÇÃO DE ELITE</p></div>
+                    <div style="text-align:right; font-size:0.6rem">DATA: ${new Date().toLocaleDateString('pt-br')}</div>
                 </div>
-
-                <div class="aluno-info">
-                    <div><b>Atleta</b> <span>${user.name}</span></div>
-                    <div><b>Objetivo</b> <span>${user.goal}</span></div>
-                    <div><b>Saúde</b> <span>${user.health}</span></div>
-                    <div><b>Gênero</b> <span>${user.gender.toUpperCase()}</span></div>
-                    <div><b>Idade</b> <span>${user.age} anos</span></div>
-                    <div><b>Peso</b> <span>${user.weight} kg</span></div>
+                <div class="info-grid">
+                    <div class="info-box"><b>Aluno(a)</b><span>${data.name}</span></div>
+                    <div class="info-box"><b>Objetivo</b><span>${data.goal}</span></div>
+                    <div class="info-box"><b>Saúde</b><span>${data.health.toUpperCase()}</span></div>
+                    <div class="info-box"><b>Gênero</b><span>${data.gender.toUpperCase()}</span></div>
+                    <div class="info-box"><b>Idade</b><span>${data.age} anos</span></div>
+                    <div class="info-box"><b>Peso</b><span>${data.weight} kg</span></div>
                 </div>
-
-                ${treinosHTML}
-
-                <div class="signature">
-                    <p>Prescrição técnica elaborada por</p>
+                ${workoutHTML}
+                <div class="footer">
+                    <p style="font-size: 0.5rem; color: #777; margin-bottom: 2px;">Prescrição validada biomecanicamente por</p>
                     <b>Lucas André</b>
-                    <p>Personal Trainer | CREF: 008094 - G/RN</p>
+                    <p>Personal Trainer - CREF: 008094 - G/RN</p>
                 </div>
             `;
         }
 
-        function getFoco(dia, user) {
-            if (user.gender === 'feminino') {
-                if (dia === "A" || dia === "D") return "Quadríceps e Glúteos 🍑";
-                if (dia === "B" || dia === "E") return "Membros Superiores e Core";
-                return "Posterior de Coxa e Glúteo Máximo 🍑";
-            }
-            if (dia === "A" || dia === "D") return "Peito, Ombros e Tríceps";
-            if (dia === "B" || dia === "E") return "Costas e Bíceps";
-            return "Membros Inferiores Completos";
-        }
-
-        function getAutoExercises(dia, user) {
-            let pool = [];
-            const isFem = user.gender === 'feminino';
-
+        function getFoco(letra, isFem) {
             if (isFem) {
-                if (dia === "A" || dia === "D") pool = [...EXERCISES_DB.PERNAS.slice(0, 6), "Elevação pelvica", "Afundo"];
-                else if (dia === "B" || dia === "E") pool = [...EXERCISES_DB.PEITO.slice(0, 2), ...EXERCISES_DB.COSTAS.slice(0, 2), ...EXERCISES_DB.OMBROS.slice(0, 2)];
-                else pool = [...EXERCISES_DB.GLÚTEO, "Stiff", "Mesa Flexora"];
-            } else {
-                if (dia === "A" || dia === "D") pool = [...EXERCISES_DB.PEITO, ...EXERCISES_DB.OMBROS, "Triceps puley"];
-                else if (dia === "B" || dia === "E") pool = [...EXERCISES_DB.COSTAS, "Rosca direta", "Rosca Martelo"];
-                else pool = EXERCISES_DB.PERNAS;
+                if (letra === 'A') return "Quadríceps e Glúteo 🍑";
+                if (letra === 'B') return "Superiores e Abdômen";
+                return "Posterior e Glúteo Máximo 🍑";
             }
-
-            // Filtros de Lesão
-            if (user.health === 'Lesão no Joelho') pool = pool.filter(e => !["Agachamento Livre", "Afundo", "Búlgaro"].includes(e));
-            if (user.health === 'Lesão Lombar') pool = pool.filter(e => !["Levantamento terra", "Stiff"].includes(e));
-
-            return pool.sort(() => 0.5 - Math.random()).slice(0, 7);
+            if (letra === 'A') return "Peito, Ombros e Tríceps";
+            if (letra === 'B') return "Costas e Bíceps";
+            return "Inferiores e Panturrilha";
         }
 
-        // Inicialização
-        updateManualDays();
+        function getAutoRows(letra, data) {
+            let pool = [];
+            const isFem = data.gender === 'feminino';
+            
+            if (isFem) {
+                if (letra === 'A') pool = [...EXERCISES_DATABASE.PERNAS.slice(0, 6), "Elevação pelvica", "Afundo"];
+                else if (letra === 'B') pool = [...EXERCISES_DATABASE.PEITO.slice(0,2), ...EXERCISES_DATABASE.COSTAS.slice(0,2), ...EXERCISES_DATABASE.ABDOMEN];
+                else pool = [...EXERCISES_DATABASE.GLÚTEO, "Stiff", "Mesa Flexora"];
+            } else {
+                if (letra === 'A') pool = [...EXERCISES_DATABASE.PEITO, ...EXERCISES_DATABASE.OMBROS, "Triceps puley"];
+                else if (letra === 'B') pool = [...EXERCISES_DATABASE.COSTAS, "Rosca direta", "Rosca Martelo", "Abdômen remador"];
+                else pool = [...EXERCISES_DATABASE.PERNAS, "Panturrilha Banco"];
+            }
+
+            // Filtros de Segurança
+            if (data.health === 'joelho') pool = pool.filter(e => !["Agachamento Livre", "Afundo", "Búlgaro"].includes(e));
+            if (data.health === 'lombar') pool = pool.filter(e => !["Levantamento terra", "Stiff", "Agachamento com Barra"].includes(e));
+
+            const sel = pool.sort(() => 0.5 - Math.random()).slice(0, 7);
+            const r = data.goal === 'Hipertrofia' ? '8-12' : '15-20';
+            return sel.map(ex => `<tr><td>${ex}</td><td>4</td><td>${r}</td><td>Cadência controlada.</td></tr>`).join('');
+        }
     </script>
 </body>
 </html>
