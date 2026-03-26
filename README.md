@@ -1,556 +1,745 @@
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PowFit Pro | Sistema de Prescrição Elite</title>
-    
-    <!-- Bibliotecas e Fontes -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-    
+    <title>PowFit Pro - Plataforma Profissional de Treinos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #fbbf24;
-            --bg-body: #0a0a0a;
-            --bg-card: #141414;
-            --text-main: #ffffff;
-            --text-muted: #a1a1aa;
-            --border: #27272a;
-            --ai-glow: #8b5cf6;
-            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            /* Tema Padrão Masculino (Escuro Fitness) */
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --input-bg: #0f172a;
+            --input-border: #475569;
         }
 
-        [data-theme="feminino"] {
-            --primary: #f472b6;
-            --bg-body: #fff1f2;
+        [data-theme="Feminino"] {
+            /* Tema Feminino (Rosa Moderno Elegante) */
+            --bg-body: #fdf2f8;
             --bg-card: #ffffff;
-            --text-main: #18181b;
-            --text-muted: #71717a;
-            --border: #fbcfe8;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #fbcfe8;
+            --primary: #ec4899;
+            --primary-hover: #db2777;
+            --input-bg: #f8fafc;
+            --input-border: #f1f5f9;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-body);
             color: var(--text-main);
-            transition: var(--transition);
-            padding: 15px;
-            line-height: 1.5;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
-
-        .container { max-width: 900px; margin: 0 auto; }
-
-        header { text-align: center; padding: 40px 0; }
-        header h1 { 
-            font-family: 'Playfair Display', serif; 
-            font-size: 2.8rem; 
-            color: var(--primary); 
-            font-weight: 900; 
-            font-style: italic;
-        }
-        header p { letter-spacing: 4px; font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; margin-top: 5px; }
 
         .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-            margin-bottom: 25px;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
-        .section-title {
-            font-size: 0.8rem;
-            font-weight: 900;
-            text-transform: uppercase;
+        .input-field {
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-main);
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 1px var(--primary);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .text-primary {
             color: var(--primary);
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
-        .grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
-        @media (min-width: 650px) { .grid { grid-template-columns: repeat(3, 1fr); } }
-
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; margin-bottom: 6px; color: var(--text-muted); }
-
-        input, select {
-            width: 100%; padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-            border-radius: 12px; color: var(--text-main); font-size: 0.95rem; outline: none; transition: 0.3s;
-        }
-
-        [data-theme="feminino"] input, [data-theme="feminino"] select { background: #fff; color: #18181b; }
-
-        /* Módulo Personal - Seleção Manual */
-        .manual-selector {
+        /* Oculta a área de impressão na tela */
+        #print-area {
             display: none;
-            margin-top: 15px;
-            border: 1px solid var(--border);
-            border-radius: 15px;
-            padding: 15px;
-            background: rgba(0,0,0,0.1);
         }
 
-        .exercise-category { margin-bottom: 30px; }
-        .category-name {
-            font-size: 0.6rem; background: var(--primary); color: #000; padding: 4px 10px;
-            border-radius: 4px; font-weight: 900; margin-bottom: 15px; display: inline-block;
-        }
-
-        .exercise-item-box {
-            background: rgba(255,255,255,0.03);
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            border: 1px solid var(--border);
-        }
-
-        .ex-label { font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; display: block; }
-        .day-chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 5px; }
-        
-        .chip {
-            flex: 0 0 auto;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            background: var(--border);
-            padding: 5px 10px;
-            border-radius: 8px;
-            font-size: 0.65rem;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .chip input { width: auto; height: auto; }
-        .chip.active { background: var(--primary); color: #000; }
-
-        .btn {
-            width: 100%; padding: 18px; background: var(--primary); color: #000; border: none; border-radius: 14px;
-            font-weight: 900; text-transform: uppercase; cursor: pointer; transition: 0.3s; font-size: 0.95rem;
-        }
-        [data-theme="feminino"] .btn { color: #fff; }
-        .btn:hover { filter: brightness(1.1); transform: translateY(-2px); }
-
-        .btn-ai {
-            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-            color: white !important;
-            margin-top: 15px;
-        }
-
-        /* Ficha Profissional Preview */
-        #preview-section { display: none; margin-top: 30px; }
-        #sheet-view {
-            background: #fff; color: #000; padding: 15mm; width: 100%; max-width: 210mm;
-            margin: 0 auto; box-shadow: 0 0 30px rgba(0,0,0,0.2);
-            position: relative;
-        }
-
-        .sheet-header { border-bottom: 4px solid #000; padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: flex-end; }
-        .sheet-header h2 { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 900; font-style: italic; color: #000; margin: 0; }
-        
-        .info-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 25px; background: #f1f5f9; padding: 15px; border-radius: 8px; }
-        .info-item b { display: block; font-size: 0.55rem; text-transform: uppercase; color: #64748b; }
-        .info-item span { font-weight: 800; color: #0f172a; font-size: 0.8rem; }
-
-        .workout-day-block { margin-bottom: 30px; page-break-inside: avoid; }
-        .day-banner { background: #000; color: #fff; padding: 8px 15px; font-weight: 900; margin-bottom: 10px; font-size: 0.9rem; display: flex; justify-content: space-between; }
-        
-        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-        th { background: #e2e8f0; text-align: left; padding: 10px; border: 1px solid #cbd5e1; font-size: 0.65rem; text-transform: uppercase; }
-        td { padding: 10px; border: 1px solid #cbd5e1; font-size: 0.8rem; color: #334155; }
-
-        .ai-recommendations {
-            margin-top: 25px; padding: 20px; background: #fdf4ff; border: 1px solid #f0abfc;
-            border-radius: 12px; font-size: 0.75rem; color: #701a75; display: none; line-height: 1.6;
-        }
-
-        .footer-presc { margin-top: 50px; text-align: right; border-top: 2px solid #000; padding-top: 20px; color: #000; }
-        .footer-presc b { font-size: 1.3rem; display: block; font-weight: 900; font-style: italic; }
-
-        /* Loader */
-        #loader {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 10000; flex-direction: column; justify-content: center; align-items: center;
-        }
-        .spin { width: 50px; height: 50px; border: 5px solid #1a1a1a; border-top: 5px solid var(--primary); border-radius: 50%; animation: rotate 1s infinite linear; }
-        @keyframes rotate { to { transform: rotate(360deg); } }
-
-        /* Impressão */
+        /* Estilos específicos para a impressão A4 */
         @media print {
-            .no-print { display: none !important; }
-            body { background: white !important; padding: 0; margin: 0; }
-            #preview-section { display: block !important; margin: 0 !important; }
-            #sheet-view { box-shadow: none !important; width: 100% !important; max-width: none !important; padding: 10mm !important; }
-            @page { size: A4; margin: 0; }
+            body {
+                background: white !important;
+                color: black !important;
+                margin: 0;
+                padding: 0;
+            }
+            #app-container, .no-print {
+                display: none !important;
+            }
+            #print-area {
+                display: block !important;
+                padding: 20mm;
+                font-family: 'Inter', sans-serif;
+                font-size: 12px;
+            }
+            @page {
+                size: A4;
+                margin: 0;
+            }
+            .print-header {
+                border-bottom: 2px solid #000;
+                padding-bottom: 15px;
+                margin-bottom: 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
+            }
+            .print-title {
+                font-size: 24px;
+                font-weight: bold;
+                margin: 0;
+                text-transform: uppercase;
+            }
+            .print-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+                margin-bottom: 25px;
+                background: #f9fafb;
+                padding: 15px;
+                border-radius: 8px;
+                border: 1px solid #e5e7eb;
+            }
+            .print-grid div { margin-bottom: 5px; }
+            .print-workout {
+                margin-bottom: 30px;
+                page-break-inside: avoid;
+            }
+            .print-workout h3 {
+                background: #1f2937;
+                color: white;
+                padding: 8px 12px;
+                margin: 0 0 10px 0;
+                font-size: 14px;
+                border-radius: 4px;
+                text-transform: uppercase;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 10px;
+            }
+            th, td {
+                border: 1px solid #d1d5db;
+                padding: 8px;
+                text-align: left;
+                font-size: 12px;
+            }
+            th {
+                background-color: #f3f4f6;
+                font-weight: 600;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            .print-footer {
+                margin-top: 40px;
+                border-top: 1px solid #e5e7eb;
+                padding-top: 20px;
+                text-align: center;
+                page-break-inside: avoid;
+            }
+            .print-recommendations {
+                background: #fdf8f6;
+                border: 1px solid #fed7aa;
+                padding: 15px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+            }
         }
+
+        /* Scrollbar customizada */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-body); }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
     </style>
 </head>
-<body>
+<body data-theme="Masculino" class="min-h-screen pb-20">
 
-    <div id="loader">
-        <div class="spin"></div>
-        <p id="loader-msg" style="margin-top: 20px; font-weight: 900; font-size: 0.7rem; color: #fff; letter-spacing: 2px;">PROCESSANDO DADOS...</p>
-    </div>
-
-    <div class="container no-print">
-        <header>
-            <h1>PowFit Pro</h1>
-            <p>SISTEMA PROFISSIONAL DE PRESCRIÇÃO</p>
-        </header>
-
-        <section class="card">
-            <div class="section-title">
-                <span>Perfil do Atleta</span>
-                <div style="font-size: 0.65rem;">
-                    Modo: 
-                    <select id="creationMode" style="width: auto; padding: 2px 5px;" onchange="toggleManualPanel()">
-                        <option value="auto">Automático</option>
-                        <option value="manual">Personal (Manual)</option>
-                    </select>
+    <!-- ÁREA PRINCIPAL DO SISTEMA -->
+    <div id="app-container" class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-dumbbell text-3xl text-primary"></i>
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight">PowFit Pro</h1>
+                    <p class="text-xs var(--text-muted)">Plataforma Profissional de Prescrição</p>
                 </div>
             </div>
+            <button onclick="generatePrint()" class="btn-primary px-6 py-2.5 rounded-lg font-medium shadow-lg flex items-center gap-2">
+                <i class="fas fa-print"></i> Imprimir Ficha A4
+            </button>
+        </div>
 
-            <form id="workoutForm">
-                <div class="grid">
-                    <div class="form-group">
-                        <label>Nome do Aluno</label>
-                        <input type="text" id="name" placeholder="Nome Completo" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Gênero</label>
-                        <select id="gender" onchange="document.body.setAttribute('data-theme', this.value)">
-                            <option value="masculino">Masculino</option>
-                            <option value="feminino">Feminino</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Idade / Peso</label>
-                        <div style="display: flex; gap: 5px;">
-                            <input type="number" id="age" placeholder="Anos" required>
-                            <input type="number" id="weight" placeholder="Kg" required>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- COLUNA ESQUERDA: Dados do Aluno e Configurações -->
+            <div class="lg:col-span-4 space-y-6">
+                
+                <!-- Card: Dados do Aluno -->
+                <div class="card rounded-xl p-5 shadow-sm">
+                    <h2 class="text-lg font-semibold mb-4 flex items-center gap-2 border-b border-opacity-20 pb-2" style="border-color: var(--border-color)">
+                        <i class="fas fa-user text-primary"></i> Dados do Aluno
+                    </h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Nome Completo</label>
+                            <input type="text" id="stu-name" class="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder="Nome do aluno">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Idade</label>
+                                <input type="number" id="stu-age" class="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder="Ex: 25">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Peso (kg)</label>
+                                <input type="number" id="stu-weight" class="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder="Ex: 75.5">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Gênero</label>
+                                <select id="stu-gender" onchange="changeTheme()" class="input-field w-full rounded-lg px-3 py-2 text-sm">
+                                    <option value="Masculino">Masculino</option>
+                                    <option value="Feminino">Feminino</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Nível</label>
+                                <select id="stu-level" class="input-field w-full rounded-lg px-3 py-2 text-sm">
+                                    <option>Iniciante</option>
+                                    <option>Intermediário</option>
+                                    <option>Avançado</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Objetivo</label>
+                            <select id="stu-objective" class="input-field w-full rounded-lg px-3 py-2 text-sm">
+                                <option>Emagrecimento</option>
+                                <option>Hipertrofia</option>
+                                <option>Definição</option>
+                                <option>Condicionamento</option>
+                                <option>Resistência</option>
+                                <option>Força</option>
+                                <option>Reabilitação</option>
+                                <option>Saúde geral</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Frequência Semanal</label>
+                            <select id="stu-freq" class="input-field w-full rounded-lg px-3 py-2 text-sm">
+                                <option>3 dias</option>
+                                <option>5 dias</option>
+                                <option>6 dias</option>
+                                <option>Personalizado</option>
+                            </select>
                         </div>
                     </div>
                 </div>
 
-                <div class="grid">
-                    <div class="form-group">
-                        <label>Objetivo</label>
-                        <select id="goal">
-                            <option value="Hipertrofia">Hipertrofia</option>
-                            <option value="Emagrecimento">Emagrecimento</option>
-                            <option value="Definição">Definição Muscular</option>
-                            <option value="Ganho de Força">Ganho de Força</option>
-                            <option value="Resistência">Resistência Muscular</option>
-                            <option value="Reabilitação">Reabilitação</option>
-                            <option value="Saúde Geral">Saúde Geral</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Estado de Saúde Atual</label>
-                        <select id="health">
-                            <option value="Saudável">Saudável</option>
-                            <option value="Sedentário">Sedentário</option>
-                            <option value="Hipertensão">Hipertensão / Cardíaco</option>
-                            <option value="Diabetes">Diabetes / Pré-diabetes</option>
-                            <option value="Obesidade">Sobrepeso / Obesidade</option>
-                            <option value="Joelho">Lesão no Joelho</option>
-                            <option value="Lombar">Lesão Lombar / Hérnia</option>
-                            <option value="Idoso">Idoso (Mobilidade/Equilíbrio)</option>
-                            <option value="Gestante">Gestante / Lactante</option>
-                            <option value="Epiléptico">Epiléptico(a)</option>
-                            <option value="Asma">Asma / Respiratório</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Frequência Semanal</label>
-                        <select id="freq" onchange="refreshManualList()">
-                            <option value="3">3 Dias (A-B-C)</option>
-                            <option value="6">6 Dias (Semanal)</option>
-                        </select>
+                <!-- Card: Estado de Saúde -->
+                <div class="card rounded-xl p-5 shadow-sm">
+                    <h2 class="text-lg font-semibold mb-4 flex items-center gap-2 border-b border-opacity-20 pb-2" style="border-color: var(--border-color)">
+                        <i class="fas fa-heartbeat text-primary"></i> Estado de Saúde
+                        <span class="text-xs font-normal opacity-60 ml-auto">(Informativo)</span>
+                    </h2>
+                    <div class="grid grid-cols-2 gap-2 text-sm" id="health-container">
+                        <!-- Gerado via JS -->
                     </div>
                 </div>
 
-                <!-- Painel de Seleção Manual do Personal -->
-                <div id="manualPanel" class="manual-selector">
-                    <div class="section-title"><span>Seleção Manual do Personal</span></div>
-                    <div id="exerciseList"></div>
+                <!-- Card: Configurações Finais -->
+                <div class="card rounded-xl p-5 shadow-sm">
+                    <h2 class="text-lg font-semibold mb-4 flex items-center gap-2 border-b border-opacity-20 pb-2" style="border-color: var(--border-color)">
+                        <i class="fas fa-cog text-primary"></i> Detalhes da Prescrição
+                    </h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Validade do Treino</label>
+                            <select id="stu-validity" class="input-field w-full rounded-lg px-3 py-2 text-sm">
+                                <option>15 dias</option>
+                                <option selected>30 dias</option>
+                                <option>60 dias</option>
+                                <option>90 dias</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Recomendações (Descanso, Cardio extra, etc.)</label>
+                            <textarea id="stu-recs" rows="4" class="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder="Escreva as recomendações livres aqui..."></textarea>
+                        </div>
+                    </div>
                 </div>
 
-                <button type="submit" class="btn" style="margin-top: 20px;">Gerar Prescrição Profissional</button>
-            </form>
-        </section>
+            </div>
+
+            <!-- COLUNA DIREITA: Montagem dos Treinos -->
+            <div class="lg:col-span-8 space-y-6">
+                
+                <div class="flex justify-between items-center bg-opacity-10 p-4 rounded-xl card border-dashed border-2">
+                    <div>
+                        <h2 class="text-xl font-bold flex items-center gap-2">
+                            <i class="fas fa-clipboard-list text-primary"></i> Montagem Livre
+                        </h2>
+                        <p class="text-sm opacity-70 mt-1">Adicione treinos e exercícios manualmente. Controle total.</p>
+                    </div>
+                    <button onclick="addWorkout()" class="btn-primary px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+                        <i class="fas fa-plus"></i> Novo Treino
+                    </button>
+                </div>
+
+                <!-- Container onde os treinos serão renderizados -->
+                <div id="workouts-container" class="space-y-6">
+                    <!-- Treinos gerados via JS -->
+                </div>
+
+            </div>
+        </div>
     </div>
 
-    <!-- Preview e Exportação -->
-    <section id="preview-section">
-        <div class="no-print" style="padding: 15px; text-align: center; display: flex; flex-direction: column; gap: 15px; align-items: center;">
-            <div style="display: flex; gap: 10px;">
-                <button class="btn" style="max-width: 250px;" onclick="window.print()">🖨️ IMPRIMIR / PDF</button>
-                <button class="btn btn-ai" style="max-width: 250px;" onclick="getAIConsultancy()">✨ RECOMENDAÇÕES IA</button>
+    <!-- MODAL DE EXERCÍCIOS -->
+    <div id="exercise-modal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="card w-full max-w-4xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="p-5 border-b flex justify-between items-center" style="border-color: var(--border-color)">
+                <h3 class="text-xl font-bold"><i class="fas fa-search text-primary mr-2"></i> Adicionar Exercício</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition-colors">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
             </div>
-            <p style="font-size: 0.6rem; color: #888;">A IA analisa biomecanicamente sua condição de saúde e prescreve dicas extras.</p>
+            
+            <div class="flex flex-col md:flex-row flex-1 overflow-hidden">
+                <!-- Categorias -->
+                <div class="w-full md:w-1/3 border-r overflow-y-auto p-4 space-y-1" style="border-color: var(--border-color)" id="modal-categories">
+                    <!-- Categorias via JS -->
+                </div>
+                <!-- Exercícios -->
+                <div class="w-full md:w-2/3 overflow-y-auto p-4 bg-black bg-opacity-5" id="modal-exercises">
+                    <!-- Lista via JS -->
+                </div>
+            </div>
         </div>
-        
-        <div id="sheet-view">
-            <!-- Gerado via JavaScript -->
-        </div>
-    </section>
+    </div>
 
+
+    <!-- ========================================== -->
+    <!-- ÁREA DE IMPRESSÃO (Oculta na tela)         -->
+    <!-- ========================================== -->
+    <div id="print-area">
+        <!-- Preenchido via JS antes de imprimir -->
+    </div>
+
+    <!-- SCRIPTS -->
     <script>
-        const apiKey = ""; // Ambiente configurado
-        const EXERCISES_DB = {
-            "PEITO": ["Supino Reto", "Supino inclinado", "Supino com Halteres", "Cross Over", "Crucifixo inclinado", "Pack Fly (Crucifixo Máquina)", "Pack Fly unilateral", "Pullover"],
-            "COSTAS": ["Puxada Alta", "Remada aberta", "Remada Baixa", "Remada Curvada", "Puxada Unilateral", "Serrote", "Pooldowm", "Facepull"],
-            "PERNAS": ["Leg-press", "Hack", "Squat", "Smith", "Bom dia", "Agachamento com Barra", "Mesa Flexora", "Cadeira Flexora", "Cadeira extensora", "Adução", "Abdução", "Stiff", "Sumô", "Levantamento terra", "Levantamento Terra Sumô"],
-            "GLÚTEO": ["Elevação de Perna lateral", "Elevação De quadril", "Coice", "Cachorrinho", "Caranguejo", "Elevação pelvica", "Avanço", "Afundo", "Búlgaro", "Panturrilha Banco", "Panturrilha squat"],
-            "BRAÇOS": ["Rosca Scot com barra", "Rosca scot com halteres", "Rosca scot unilateral", "Rosca direta", "Rosca 21", "Rosca Alternada", "Rosca no cross", "Rosca Martelo", "Triceps puley", "Triceps na Corda", "Triceps Coice", "Triceps Testa", "Triceps Francês"],
-            "OMBROS": ["Elevação Frontal", "Desenvolvimento com halteres", "Desenvolvimento Arnold", "Elevação lateral", "Elevação Borboleta"],
-            "ABDOMEN": ["Abdôminal Infra", "Abdôminal remador", "Abdôminal Prancha 5× de 30seg"],
-            "CÁRDIO": ["Bicicleta 10min", "Bicicleta 15min", "Bicicleta 20min", "Esteira 10min", "Esteira 15min", "Esteira 20min", "Pula Corda 5× de 30seg"]
+        // --- BANCO DE DADOS ---
+        const db = {
+            healthOptions: [
+                "Saudável", "Sedentário", "Sobrepeso", "Obesidade", 
+                "Diabetes", "Hipertensão", "Problemas cardíacos", 
+                "Lesões", "Gestante", "Idoso"
+            ],
+            categories: {
+                "PEITO": ["Supino Reto", "Supino Inclinado", "Supino com Halteres", "Cross Over", "Crucifixo Inclinado", "Peck Fly", "Peck Fly Unilateral", "Pullover"],
+                "COSTAS": ["Puxada Alta", "Remada Aberta", "Remada Baixa", "Remada Curvada", "Puxada Unilateral", "Serrote", "Pulldown", "Facepull"],
+                "PERNAS": ["Leg Press", "Hack", "Squat", "Smith", "Agachamento Livre", "Agachamento com Barra", "Mesa Flexora", "Cadeira Flexora", "Cadeira Extensora", "Adução", "Abdução", "Stiff", "Bom Dia", "Sumô", "Levantamento Terra", "Terra Sumô", "Levantamento Terra Romeno"],
+                "GLÚTEO": ["Elevação Lateral", "Elevação de Quadril", "Coice", "Cachorrinho", "Caranguejo", "Elevação Pélvica", "Avanço", "Afundo", "Búlgaro", "Panturrilha Banco", "Panturrilha Squat"],
+                "BRAÇOS": ["Rosca Scott Barra W", "Rosca Scott Unilateral", "Rosca Scott com Halteres", "Rosca Direta", "Rosca 21", "Rosca Alternada", "Rosca Cross", "Rosca Martelo", "Tríceps Pulley", "Tríceps Corda", "Tríceps Coice", "Tríceps Testa", "Tríceps Francês", "Triceps Francês Unilateral"],
+                "OMBROS": ["Elevação Frontal", "Elevação Frontal no Cross", "Desenvolvimento Halteres", "Arnold", "Elevação Lateral", "Elevação Borboleta"],
+                "ABDÔMEN": ["Infra com Elevação de perna", "Remador", "Prancha"],
+                "CARDIO": ["Bicicleta", "Esteira", "Pular Corda"]
+            },
+            techniques: [
+                "Nenhuma", "Drop set", "Bi-set", "Tri-set", "Série gigante", 
+                "Rest-pause", "FST-7", "Pré-exaustão", "Pós-exaustão", 
+                "Negativa", "Isometria", "Parciais", "Pirâmide"
+            ]
         };
 
-        function toggleManualPanel() {
-            const mode = document.getElementById('creationMode').value;
-            document.getElementById('manualPanel').style.display = (mode === 'manual') ? 'block' : 'none';
-            if(mode === 'manual') refreshManualList();
+        // --- ESTADO DA APLICAÇÃO ---
+        let state = {
+            workouts: [
+                { id: generateId(), title: "Treino A", exercises: [] }
+            ],
+            activeModalWorkoutId: null,
+            activeCategory: "PEITO"
+        };
+
+        // --- INICIALIZAÇÃO ---
+        function init() {
+            renderHealthOptions();
+            renderWorkouts();
         }
 
-        function refreshManualList() {
-            const container = document.getElementById('exerciseList');
-            const freq = parseInt(document.getElementById('freq').value);
-            container.innerHTML = "";
+        // --- FUNÇÕES DE INTERFACE ---
+        function changeTheme() {
+            const gender = document.getElementById('stu-gender').value;
+            document.body.setAttribute('data-theme', gender);
+        }
 
-            for (const cat in EXERCISES_DB) {
-                const catDiv = document.createElement('div');
-                catDiv.className = 'exercise-category';
-                catDiv.innerHTML = `<div class="category-name">${cat}</div>`;
-                
-                EXERCISES_DB[cat].forEach(ex => {
-                    const box = document.createElement('div');
-                    box.className = 'exercise-item-box';
-                    
-                    let chips = "";
-                    for(let d=1; d <= freq; d++) {
-                        chips += `
-                            <label class="chip" id="chip-${ex}-${d}">
-                                <input type="checkbox" name="manual-ex" value="${ex}" data-day="${d}" onchange="this.parentElement.classList.toggle('active', this.checked)">
-                                D${d}
-                            </label>
-                        `;
-                    }
+        function generateId() {
+            return Math.random().toString(36).substr(2, 9);
+        }
 
-                    box.innerHTML = `<span class="ex-label">${ex}</span><div class="day-chips">${chips}</div>`;
-                    catDiv.appendChild(box);
-                });
-                container.appendChild(catDiv);
+        function renderHealthOptions() {
+            const container = document.getElementById('health-container');
+            container.innerHTML = db.healthOptions.map(opt => `
+                <label class="flex items-center space-x-2 cursor-pointer p-1 rounded hover:bg-black hover:bg-opacity-5 transition">
+                    <input type="checkbox" value="${opt}" class="health-cb rounded border-gray-400 text-primary focus:ring-primary w-4 h-4">
+                    <span>${opt}</span>
+                </label>
+            `).join('');
+        }
+
+        // --- LÓGICA DE TREINOS ---
+        function getNextWorkoutLetter() {
+            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const currentCount = state.workouts.length;
+            return letters[currentCount % 26];
+        }
+
+        function addWorkout() {
+            const letter = getNextWorkoutLetter();
+            state.workouts.push({
+                id: generateId(),
+                title: `Treino ${letter}`,
+                exercises: []
+            });
+            renderWorkouts();
+        }
+
+        function duplicateWorkout(id) {
+            const workout = state.workouts.find(w => w.id === id);
+            if(workout) {
+                const newWorkout = JSON.parse(JSON.stringify(workout));
+                newWorkout.id = generateId();
+                newWorkout.title = newWorkout.title + " (Cópia)";
+                state.workouts.push(newWorkout);
+                renderWorkouts();
             }
         }
 
-        document.getElementById('workoutForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            document.getElementById('loader').style.display = 'flex';
-            
-            setTimeout(() => {
-                renderWorkoutSheet();
-                document.getElementById('loader').style.display = 'none';
-                document.getElementById('preview-section').style.display = 'block';
-                window.scrollTo({ top: document.getElementById('preview-section').offsetTop - 20, behavior: 'smooth' });
-            }, 1200);
-        });
+        function removeWorkout(id) {
+            if(confirm("Tem certeza que deseja remover este treino inteiro?")) {
+                state.workouts = state.workouts.filter(w => w.id !== id);
+                renderWorkouts();
+            }
+        }
 
-        function renderWorkoutSheet() {
-            const sheet = document.getElementById('sheet-view');
-            const data = {
-                name: document.getElementById('name').value,
-                gender: document.getElementById('gender').value,
-                age: document.getElementById('age').value,
-                weight: document.getElementById('weight').value,
-                goal: document.getElementById('goal').value,
-                health: document.getElementById('health').value,
-                freq: parseInt(document.getElementById('freq').value),
-                mode: document.getElementById('creationMode').value
-            };
+        function updateWorkoutTitle(id, newTitle) {
+            const workout = state.workouts.find(w => w.id === id);
+            if(workout) workout.title = newTitle;
+        }
 
-            let workoutHTML = "";
-            const isFem = data.gender === 'feminino';
+        // --- LÓGICA DE EXERCÍCIOS ---
+        function removeExercise(workoutId, exIndex) {
+            const workout = state.workouts.find(w => w.id === workoutId);
+            workout.exercises.splice(exIndex, 1);
+            renderWorkouts();
+        }
 
-            if(data.mode === 'manual') {
-                const checks = Array.from(document.querySelectorAll('input[name="manual-ex"]:checked'));
-                if(checks.length === 0) { alert("Por favor, selecione os exercícios no módulo personal!"); document.getElementById('loader').style.display = 'none'; return; }
+        function moveExercise(workoutId, exIndex, direction) {
+            const workout = state.workouts.find(w => w.id === workoutId);
+            if (direction === 'up' && exIndex > 0) {
+                const temp = workout.exercises[exIndex];
+                workout.exercises[exIndex] = workout.exercises[exIndex - 1];
+                workout.exercises[exIndex - 1] = temp;
+            } else if (direction === 'down' && exIndex < workout.exercises.length - 1) {
+                const temp = workout.exercises[exIndex];
+                workout.exercises[exIndex] = workout.exercises[exIndex + 1];
+                workout.exercises[exIndex + 1] = temp;
+            }
+            renderWorkouts();
+        }
 
-                for(let d=1; d <= data.freq; d++) {
-                    const dailyEx = checks.filter(c => parseInt(c.dataset.day) === d);
-                    if(dailyEx.length > 0) {
-                        workoutHTML += `
-                            <div class="workout-day-block">
-                                <div class="day-banner">DIA ${d} - PRESCRIÇÃO PERSONALIZADA</div>
-                                <table>
-                                    <thead><tr><th>Exercício</th><th style="width:60px">Séries</th><th style="width:70px">Reps</th><th>Observações</th></tr></thead>
-                                    <tbody>
-                                        ${dailyEx.map(c => `<tr><td class="ex-name-ref">${c.value}</td><td>4</td><td>12-15</td><td>Prescrito manualmente.</td></tr>`).join('')}
-                                    </tbody>
-                                </table>
+        function updateExercise(workoutId, exIndex, field, value) {
+            const workout = state.workouts.find(w => w.id === workoutId);
+            if(workout && workout.exercises[exIndex]) {
+                workout.exercises[exIndex][field] = value;
+            }
+        }
+
+        // --- RENDERIZAÇÃO DE TREINOS ---
+        function renderWorkouts() {
+            const container = document.getElementById('workouts-container');
+            container.innerHTML = '';
+
+            state.workouts.forEach(workout => {
+                const techOptions = db.techniques.map(t => `<option value="${t}">${t}</option>`).join('');
+
+                let exercisesHtml = '';
+                if (workout.exercises.length === 0) {
+                    exercisesHtml = `<div class="text-center p-6 text-sm opacity-50 italic">Nenhum exercício adicionado a este treino.</div>`;
+                } else {
+                    exercisesHtml = workout.exercises.map((ex, idx) => `
+                        <div class="flex flex-col sm:flex-row gap-3 p-3 items-start sm:items-center border-b last:border-0 border-opacity-10" style="border-color: var(--border-color)">
+                            
+                            <!-- Controles de ordem -->
+                            <div class="flex sm:flex-col gap-1 hidden sm:flex">
+                                <button onclick="moveExercise('${workout.id}', ${idx}, 'up')" class="text-xs p-1 rounded hover:bg-black hover:bg-opacity-10" title="Subir"><i class="fas fa-chevron-up"></i></button>
+                                <button onclick="moveExercise('${workout.id}', ${idx}, 'down')" class="text-xs p-1 rounded hover:bg-black hover:bg-opacity-10" title="Descer"><i class="fas fa-chevron-down"></i></button>
                             </div>
-                        `;
-                    }
-                }
-            } else {
-                // Modo Automático Inteligente
-                for(let i=0; i < data.freq; i++) {
-                    const dia = i + 1;
-                    const letra = ["A", "B", "C"][i % 3];
-                    workoutHTML += `
-                        <div class="workout-day-block">
-                            <div class="day-banner">
-                                <span>DIA ${dia} - TREINO ${letra}</span>
-                                <span style="font-size:0.55rem; opacity:0.7;">FOCO: ${getAutoFoco(letra, isFem, data.health)}</span>
+
+                            <!-- Nome -->
+                            <div class="flex-1 font-medium w-full sm:w-auto">
+                                <div class="text-xs opacity-60 uppercase tracking-wider">${ex.category}</div>
+                                <div>${ex.name}</div>
                             </div>
-                            <table>
-                                <thead><tr><th>Exercício</th><th style="width:60px">Séries</th><th style="width:70px">Reps</th><th>Observações</th></tr></thead>
-                                <tbody>
-                                    ${getAutoRows(letra, data)}
-                                </tbody>
-                            </table>
+
+                            <!-- Campos Editáveis -->
+                            <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+                                <input type="text" value="${ex.sets}" onchange="updateExercise('${workout.id}', ${idx}, 'sets', this.value)" class="input-field w-16 rounded px-2 py-1 text-sm text-center" placeholder="Séries">
+                                <span class="self-center opacity-50">x</span>
+                                <input type="text" value="${ex.reps}" onchange="updateExercise('${workout.id}', ${idx}, 'reps', this.value)" class="input-field w-20 rounded px-2 py-1 text-sm text-center" placeholder="Reps">
+                                
+                                <select onchange="updateExercise('${workout.id}', ${idx}, 'technique', this.value)" class="input-field w-32 rounded px-2 py-1 text-sm">
+                                    ${db.techniques.map(t => `<option value="${t}" ${ex.technique === t ? 'selected' : ''}>${t}</option>`).join('')}
+                                </select>
+                                
+                                <input type="text" value="${ex.obs}" onchange="updateExercise('${workout.id}', ${idx}, 'obs', this.value)" class="input-field flex-1 sm:w-40 rounded px-2 py-1 text-sm" placeholder="Observações (ex: rest 60s)">
+                            </div>
+
+                            <!-- Ações -->
+                            <div class="flex items-center gap-2 w-full sm:w-auto justify-end mt-2 sm:mt-0">
+                                <div class="sm:hidden flex gap-2 mr-auto">
+                                    <button onclick="moveExercise('${workout.id}', ${idx}, 'up')" class="btn-primary text-xs p-2 rounded"><i class="fas fa-arrow-up"></i></button>
+                                    <button onclick="moveExercise('${workout.id}', ${idx}, 'down')" class="btn-primary text-xs p-2 rounded"><i class="fas fa-arrow-down"></i></button>
+                                </div>
+                                <button onclick="removeExercise('${workout.id}', ${idx})" class="text-red-500 hover:text-red-700 p-2 rounded transition" title="Remover Exercício">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
                         </div>
-                    `;
+                    `).join('');
                 }
-            }
 
-            sheet.innerHTML = `
-                <div class="sheet-header">
-                    <div>
-                        <h2>POWFIT PRO</h2>
-                        <p style="font-size:0.5rem; color:#444; font-weight:800; margin-top:5px;">SISTEMA DE ALTA PERFORMANCE</p>
+                const workoutCard = `
+                    <div class="card rounded-xl overflow-hidden shadow-sm">
+                        <div class="p-4 border-b flex justify-between items-center" style="border-color: var(--border-color); background-color: rgba(0,0,0,0.02)">
+                            <div class="flex items-center gap-2 w-1/2">
+                                <i class="fas fa-dumbbell opacity-50"></i>
+                                <input type="text" value="${workout.title}" onchange="updateWorkoutTitle('${workout.id}', this.value)" class="input-field bg-transparent font-bold text-lg w-full px-2 py-1 rounded">
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="duplicateWorkout('${workout.id}')" class="text-sm p-2 rounded hover:bg-black hover:bg-opacity-10 transition tooltip" title="Duplicar Treino">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                                <button onclick="removeWorkout('${workout.id}')" class="text-sm p-2 text-red-500 rounded hover:bg-red-500 hover:text-white transition tooltip" title="Excluir Treino">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="p-0">
+                            ${exercisesHtml}
+                        </div>
+
+                        <div class="p-3 bg-black bg-opacity-5 border-t" style="border-color: var(--border-color)">
+                            <button onclick="openModal('${workout.id}')" class="w-full btn-primary py-2 rounded-lg font-medium text-sm border border-dashed border-opacity-50 hover:border-solid transition flex justify-center items-center gap-2">
+                                <i class="fas fa-plus-circle"></i> Adicionar Exercício neste Treino
+                            </button>
+                        </div>
                     </div>
-                    <div style="text-align:right; font-size:0.6rem; color:#444;">DATA: ${new Date().toLocaleDateString('pt-br')}</div>
-                </div>
+                `;
+                container.insertAdjacentHTML('beforeend', workoutCard);
+            });
+        }
 
-                <div class="info-strip">
-                    <div class="info-item"><b>Aluno</b><span>${data.name}</span></div>
-                    <div class="info-item"><b>Objetivo</b><span>${data.goal}</span></div>
-                    <div class="info-item"><b>Saúde</b><span>${data.health.toUpperCase()}</span></div>
-                    <div class="info-item"><b>Gênero</b><span>${data.gender.toUpperCase()}</span></div>
-                    <div class="info-item"><b>Idade</b><span>${data.age} anos</span></div>
-                    <div class="info-item"><b>Peso</b><span>${data.weight} kg</span></div>
-                </div>
+        // --- MODAL E BANCO DE EXERCÍCIOS ---
+        function openModal(workoutId) {
+            state.activeModalWorkoutId = workoutId;
+            document.getElementById('exercise-modal').classList.remove('hidden');
+            renderModalCategories();
+            renderModalExercises();
+        }
 
-                <div style="background: #fdf2f2; border: 1px solid #fecaca; padding: 10px; border-radius: 6px; margin-bottom: 20px; font-size: 0.7rem; color: #991b1b;">
-                    <b>⚠️ RECOMENDAÇÃO DE SEGURANÇA:</b> ${getHealthNote(data.health)}
-                </div>
+        function closeModal() {
+            document.getElementById('exercise-modal').classList.add('hidden');
+            state.activeModalWorkoutId = null;
+        }
 
-                ${workoutHTML}
+        function renderModalCategories() {
+            const container = document.getElementById('modal-categories');
+            container.innerHTML = Object.keys(db.categories).map(cat => `
+                <button onclick="setModalCategory('${cat}')" class="w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition ${state.activeCategory === cat ? 'bg-primary text-white shadow-md' : 'hover:bg-black hover:bg-opacity-10'}">
+                    ${cat}
+                </button>
+            `).join('');
+        }
 
-                <div id="ai-recom-box" class="ai-recommendations"></div>
+        function setModalCategory(cat) {
+            state.activeCategory = cat;
+            renderModalCategories();
+            renderModalExercises();
+        }
 
-                <div class="footer-presc">
-                    <p style="font-size: 0.5rem; color: #777; margin-bottom: 5px;">Prescrição biomecanicamente validada por</p>
-                    <b>LUCAS ANDRÉ</b>
-                    <p style="font-size: 0.7rem; font-weight: 700;">Personal Trainer - CREF: 008094 - G/RN</p>
+        function renderModalExercises() {
+            const container = document.getElementById('modal-exercises');
+            const exercises = db.categories[state.activeCategory];
+            
+            container.innerHTML = `
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    ${exercises.map(ex => `
+                        <button onclick="addExerciseToWorkout('${ex}')" class="card p-3 rounded-lg text-left text-sm font-medium border hover:border-primary hover:text-primary transition flex justify-between items-center group">
+                            ${ex}
+                            <i class="fas fa-plus opacity-0 group-hover:opacity-100 transition"></i>
+                        </button>
+                    `).join('')}
                 </div>
             `;
         }
 
-        function getAutoFoco(letra, isFem, health) {
-            if (["Idoso", "Gestante", "Hipertensão", "Epiléptico"].includes(health)) return "Saúde e Controle";
-            if (isFem) {
-                if (letra === 'A') return "Quadríceps e Glúteo 🍑";
-                if (letra === 'B') return "Superiores e Core";
-                return "Posterior e Glúteo Máximo 🍑";
-            }
-            if (letra === 'A') return "Peito, Ombros e Tríceps";
-            if (letra === 'B') return "Costas e Bíceps";
-            return "Membros Inferiores Completos";
-        }
-
-        function getHealthNote(health) {
-            const notes = {
-                "Hipertensão": "Evite manobra de Valsalva (trancar a respiração). Foco em treinos rítmicos e contínuos.",
-                "Gestante": "Sem exercícios em decúbito ventral (barriga para baixo) após 1º trimestre. Carga leve a moderada.",
-                "Joelho": "Evite exercícios de alto impacto. Foco em fortalecimento isométrico e cadeia aberta.",
-                "Lombar": "Evite sobrecarga axial e flexões excessivas de tronco. Priorize estabilização de core.",
-                "Epiléptico": "Treine sempre acompanhado(a). Evite exercícios em alturas ou com cargas que não possa soltar.",
-                "Asma": "Mantenha medicação por perto. Controle a intensidade conforme o fluxo respiratório.",
-                "Obesidade": "Foco em exercícios de baixo impacto articular e controle da frequência cardíaca."
-            };
-            return notes[health] || "Consulte sempre um profissional de saúde antes de iniciar atividades intensas.";
-        }
-
-        function getAutoRows(letra, data) {
-            let pool = [];
-            const isFem = data.gender === 'feminino';
-            const health = data.health;
-
-            if (isFem) {
-                if (letra === 'A') pool = [...EXERCISES_DB.PERNAS.slice(0, 5), "Elevação pelvica", "Afundo"];
-                else if (letra === 'B') pool = [...EXERCISES_DB.PEITO.slice(0,2), ...EXERCISES_DB.COSTAS.slice(0,2), ...EXERCISES_DB.ABDOMEN];
-                else pool = [...EXERCISES_DB.GLÚTEO, "Stiff", "Mesa Flexora", "Sumô"];
-            } else {
-                if (letra === 'A') pool = [...EXERCISES_DB.PEITO.slice(0,4), ...EXERCISES_DB.OMBROS.slice(0,3), "Triceps puley"];
-                else if (letra === 'B') pool = [...EXERCISES_DB.COSTAS.slice(0,5), ...EXERCISES_DB.BRAÇOS.slice(0,3)];
-                else pool = [...EXERCISES_DB.PERNAS, "Panturrilha Banco"];
-            }
-
-            // Filtros de Segurança Biomecânica
-            if (health === "Joelho") pool = pool.filter(e => !["Agachamento Livre", "Afundo", "Búlgaro", "Avanço", "Pula Corda"].includes(e));
-            if (health === "Lombar") pool = pool.filter(e => !["Levantamento terra", "Stiff", "Agachamento com Barra", "Remada Curvada"].includes(e));
-            if (health === "Hipertensão" || health === "Cardíaco") pool = pool.filter(e => !["Burpee", "Pula Corda"].includes(e));
-
-            const sel = pool.sort(() => 0.5 - Math.random()).slice(0, 6);
-            
-            let s = "4", r = "12-15", o = "Intervalo 60s";
-            if (data.goal === "Hipertrofia") { s = "4"; r = "8-12"; o = "Foco em falha técnica."; }
-            if (data.goal === "Ganho de Força") { s = "5"; r = "4-6"; o = "Carga alta. Descanso 2-3min."; }
-            if (["Idoso", "Gestante", "Hipertensão"].includes(health)) { s = "3"; r = "15-20"; o = "Intensidade controlada."; }
-
-            return sel.map(ex => `<tr><td class="ex-name-ref">${ex}</td><td>${s}</td><td>${r}</td><td>${o}</td></tr>`).join('');
-        }
-
-        // Integração Gemini API para Recomendações
-        async function getAIConsultancy() {
-            const loader = document.getElementById('loader');
-            const box = document.getElementById('ai-recom-box');
-            loader.style.display = 'flex';
-            document.getElementById('loader-msg').innerText = "IA ANALISANDO BIOMECÂNICA...";
-
-            const aluno = {
-                nome: document.getElementById('name').value,
-                idade: document.getElementById('age').value,
-                saude: document.getElementById('health').value,
-                objetivo: document.getElementById('goal').value,
-                exercicios: Array.from(document.querySelectorAll('.ex-name-ref')).map(el => el.innerText).join(', ')
-            };
-
-            const systemPrompt = "Você é um mestre em fisiologia e biomecânica. Sua missão é analisar o perfil do aluno e o treino gerado, fornecendo 3 dicas curtas e científicas de segurança e performance. Use tom profissional e encorajador.";
-            const userPrompt = `Aluno: ${aluno.nome}, ${aluno.idade} anos. Saúde: ${aluno.saude}. Objetivo: ${aluno.objetivo}. Exercícios no treino: ${aluno.exercicios}. Forneça uma breve análise de segurança biomecânica em Português.`;
-
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: userPrompt }] }],
-                        systemInstruction: { parts: [{ text: systemPrompt }] }
-                    })
+        function addExerciseToWorkout(exerciseName) {
+            const workout = state.workouts.find(w => w.id === state.activeModalWorkoutId);
+            if(workout) {
+                workout.exercises.push({
+                    category: state.activeCategory,
+                    name: exerciseName,
+                    sets: '3',
+                    reps: '10 a 12',
+                    technique: 'Nenhuma',
+                    obs: ''
                 });
-
-                const json = await response.json();
-                const text = json.candidates[0].content.parts[0].text;
-                box.innerHTML = `<strong>✨ CONSULTORIA TÉCNICA (IA):</strong><br><br>${text.replace(/\n/g, '<br>')}`;
-                box.style.display = 'block';
-                window.scrollTo({ top: box.offsetTop - 50, behavior: 'smooth' });
-            } catch (error) {
-                console.error("AI Error:", error);
-                box.innerHTML = "Não foi possível carregar as dicas da IA agora. Siga as orientações padrão.";
-                box.style.display = 'block';
-            } finally {
-                loader.style.display = 'none';
+                renderWorkouts();
+                
+                // Feedback visual leve (opcional)
+                const container = document.getElementById('modal-exercises');
+                container.style.opacity = '0.5';
+                setTimeout(() => container.style.opacity = '1', 150);
             }
         }
+
+
+        // --- LÓGICA DE IMPRESSÃO PROFISSIONAL A4 ---
+        function generatePrint() {
+            // Coletar dados do formulário
+            const data = {
+                name: document.getElementById('stu-name').value || 'Não informado',
+                age: document.getElementById('stu-age').value || '-',
+                weight: document.getElementById('stu-weight').value || '-',
+                gender: document.getElementById('stu-gender').value,
+                level: document.getElementById('stu-level').value,
+                objective: document.getElementById('stu-objective').value,
+                freq: document.getElementById('stu-freq').value,
+                validity: document.getElementById('stu-validity').value,
+                recs: document.getElementById('stu-recs').value || 'Siga o plano adequadamente.',
+                health: Array.from(document.querySelectorAll('.health-cb:checked')).map(cb => cb.value).join(', ') || 'Nenhuma restrição assinalada'
+            };
+
+            const printArea = document.getElementById('print-area');
+            
+            // Construir HTML da impressão
+            let html = `
+                <div class="print-header">
+                    <div>
+                        <h1 class="print-title">Ficha de Treinamento</h1>
+                        <p style="margin: 5px 0 0 0; color: #4b5563;">Prescrição Individualizada</p>
+                    </div>
+                    <div style="text-align: right; font-size: 11px;">
+                        Data: ${new Date().toLocaleDateString('pt-BR')}<br>
+                        Validade: ${data.validity}
+                    </div>
+                </div>
+
+                <div class="print-grid">
+                    <div><strong>Aluno(a):</strong> ${data.name}</div>
+                    <div><strong>Objetivo:</strong> ${data.objective}</div>
+                    <div><strong>Idade:</strong> ${data.age} anos | <strong>Peso:</strong> ${data.weight} kg | <strong>Gênero:</strong> ${data.gender}</div>
+                    <div><strong>Nível:</strong> ${data.level}</div>
+                    <div><strong>Frequência:</strong> ${data.freq}</div>
+                    <div><strong>Condições Clínicas:</strong> ${data.health}</div>
+                </div>
+            `;
+
+            // Adicionar tabelas de treinos
+            state.workouts.forEach(w => {
+                html += `
+                    <div class="print-workout">
+                        <h3>${w.title}</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 35%">Exercício</th>
+                                    <th style="width: 10%">Séries</th>
+                                    <th style="width: 15%">Repetições</th>
+                                    <th style="width: 15%">Técnica</th>
+                                    <th style="width: 25%">Observações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                
+                if (w.exercises.length === 0) {
+                    html += `<tr><td colspan="5" style="text-align:center; color:#6b7280; font-style:italic;">Sem exercícios cadastrados</td></tr>`;
+                } else {
+                    w.exercises.forEach(ex => {
+                        const techStr = ex.technique !== 'Nenhuma' ? ex.technique : '-';
+                        html += `
+                            <tr>
+                                <td><strong>${ex.name}</strong></td>
+                                <td>${ex.sets}</td>
+                                <td>${ex.reps}</td>
+                                <td>${techStr}</td>
+                                <td>${ex.obs || '-'}</td>
+                            </tr>
+                        `;
+                    });
+                }
+                
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            });
+
+            // Recomendações e Rodapé Obrigatório
+            html += `
+                <div class="print-recommendations">
+                    <h4 style="margin-top:0; margin-bottom: 10px;">Recomendações do Profissional</h4>
+                    <p style="white-space: pre-wrap; margin:0; font-size: 11px; line-height: 1.5;">${data.recs}</p>
+                </div>
+
+                <div class="print-footer">
+                    <p style="font-weight: bold; margin: 0; font-size: 14px;">Lucas André</p>
+                    <p style="margin: 2px 0 0 0; color: #4b5563;">Personal Trainer</p>
+                    <p style="margin: 2px 0 0 0; font-size: 11px;">CREF: 008094 - G/RN</p>
+                </div>
+            `;
+
+            printArea.innerHTML = html;
+            
+            // Disparar impressão
+            setTimeout(() => {
+                window.print();
+            }, 200);
+        }
+
+        // Iniciar
+        init();
+
     </script>
 </body>
 </html>
