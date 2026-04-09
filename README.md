@@ -454,7 +454,7 @@
             "🫀 CARDIO": [
                 "Bicicleta - 10 Minutos", "Bicicleta - 15 Minutos", "Bicicleta - 20 Minutos",
                 "Esteira - 10 Minutos", "Esteira - 15 Minutos", "Esteira - 20 Minutos",
-                "Pular Corda - 10 Minutos", "Pular Corda - 15 Minutos", "Pular Corda - 20 Minutos"
+                "Pular Corda"
             ]
         };
 
