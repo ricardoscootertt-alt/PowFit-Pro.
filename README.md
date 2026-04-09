@@ -566,7 +566,7 @@
             renderWorkouts();
         }
 
-        function duplicateWorkout(id) {
+        function Workout(id) {
             const workout = state.workouts.find(w => w.id === id);
             if(workout) {
                 const newWorkout = JSON.parse(JSON.stringify(workout));
