@@ -7,9 +7,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* ==========================================
-           SISTEMA DE TEMAS (Variáveis CSS)
-           ========================================== */
         :root {
             /* Tema Padrão Masculino (Escuro Fitness) */
             --bg-body: #0f172a;
@@ -21,7 +18,8 @@
             --primary-hover: #2563eb;
             --input-bg: #0f172a;
             --input-border: #475569;
-            --header-bg: #1e293b;
+            --health-bg: #0f172a;
+            --health-hover: #1e293b;
         }
 
         [data-theme="Feminino"] {
@@ -34,13 +32,11 @@
             --primary: #ec4899;
             --primary-hover: #db2777;
             --input-bg: #f8fafc;
-            --input-border: #e2e8f0;
-            --header-bg: #fce7f3;
+            --input-border: #f1f5f9;
+            --health-bg: #fdf2f8;
+            --health-hover: #fce7f3;
         }
 
-        /* ==========================================
-           ESTILOS GERAIS
-           ========================================== */
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-body);
@@ -58,7 +54,6 @@
             background-color: var(--input-bg);
             border: 1px solid var(--input-border);
             color: var(--text-main);
-            transition: border-color 0.2s, box-shadow 0.2s;
         }
         
         .input-field:focus {
@@ -70,39 +65,62 @@
         .btn-primary {
             background-color: var(--primary);
             color: white;
-            transition: background-color 0.2s, transform 0.1s;
+            transition: background-color 0.2s;
         }
 
         .btn-primary:hover {
             background-color: var(--primary-hover);
         }
+
+        .text-primary {
+            color: var(--primary);
+        }
+
+        .health-card {
+            background-color: var(--health-bg);
+            border: 1px solid var(--border-color);
+            transition: all 0.2s;
+        }
         
-        .btn-primary:active {
-            transform: scale(0.98);
+        .health-card:hover {
+            background-color: var(--health-hover);
         }
 
-        .text-primary { color: var(--primary); }
-        .bg-primary-light { background-color: var(--primary); opacity: 0.1; }
-
-        /* Animação para adição de exercício */
-        @keyframes flashAdd {
-            0% { background-color: transparent; }
-            50% { background-color: var(--primary); color: white; }
-            100% { background-color: transparent; }
+        .health-cb:checked + div {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 1px var(--primary);
         }
-        .flash-animation { animation: flashAdd 0.4s ease-out; }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+        /* Oculta a área de impressão na tela */
+        #print-area {
+            display: none;
+        }
 
-        /* ==========================================
-           ESTILOS DE IMPRESSÃO PROFISSIONAL A4
-           ========================================== */
-        #print-area { display: none; }
+        /* Toast Notification */
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #10b981;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 12px;
+            position: fixed;
+            z-index: 100;
+            bottom: 30px;
+            right: 30px;
+            font-size: 14px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
 
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Estilos específicos para a impressão A4 */
         @media print {
             body {
                 background: white !important;
@@ -110,178 +128,168 @@
                 margin: 0;
                 padding: 0;
             }
-            #app-container, #exercise-modal {
+            #app-container, .no-print, #toast, #exercise-modal {
                 display: none !important;
             }
             #print-area {
                 display: block !important;
-                padding: 15mm 20mm;
+                padding: 15mm;
                 font-family: 'Inter', sans-serif;
-                font-size: 11px;
-                color: #111827;
+                font-size: 12px;
             }
             @page {
                 size: A4;
                 margin: 0;
             }
-            
             .print-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                border-bottom: 2px solid #111827;
+                border-bottom: 2px solid #000;
                 padding-bottom: 10px;
                 margin-bottom: 15px;
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
             }
-            .print-header h1 {
+            .print-title {
                 font-size: 22px;
-                font-weight: 800;
+                font-weight: bold;
                 margin: 0;
                 text-transform: uppercase;
-                letter-spacing: 1px;
             }
-            .print-header p { margin: 0; font-size: 10px; color: #4b5563; }
-            
-            .print-patient-info {
+            .print-grid {
                 display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 8px;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                margin-bottom: 20px;
                 background: #f9fafb;
                 padding: 12px;
-                border-radius: 6px;
+                border-radius: 8px;
                 border: 1px solid #e5e7eb;
-                margin-bottom: 20px;
             }
-            .print-patient-info div { margin-bottom: 4px; }
-            .print-patient-info strong { color: #374151; }
-            .col-span-full { grid-column: 1 / -1; }
-
+            .print-grid div { margin-bottom: 4px; font-size: 11px; }
             .print-workout {
                 margin-bottom: 20px;
                 page-break-inside: avoid;
             }
-            .print-workout-title {
-                background: #111827;
+            .print-workout h3 {
+                background: #1f2937;
                 color: white;
-                padding: 6px 12px;
-                margin: 0;
-                font-size: 14px;
-                font-weight: bold;
-                border-top-left-radius: 6px;
-                border-top-right-radius: 6px;
+                padding: 6px 10px;
+                margin: 0 0 8px 0;
+                font-size: 13px;
+                border-radius: 4px;
+                text-transform: uppercase;
                 -webkit-print-color-adjust: exact;
                 color-adjust: exact;
             }
-            
             table {
                 width: 100%;
                 border-collapse: collapse;
-                margin-bottom: 0;
-                border-bottom-left-radius: 6px;
-                border-bottom-right-radius: 6px;
-                overflow: hidden;
+                margin-bottom: 10px;
             }
             th, td {
                 border: 1px solid #d1d5db;
                 padding: 6px 8px;
                 text-align: left;
+                font-size: 11px;
             }
             th {
                 background-color: #f3f4f6;
                 font-weight: 600;
-                font-size: 10px;
-                text-transform: uppercase;
-                color: #4b5563;
                 -webkit-print-color-adjust: exact;
                 color-adjust: exact;
             }
-            td { font-size: 11px; }
-            
-            .print-recommendations {
-                margin-top: 20px;
-                background: #fdf8f6;
-                border: 1px solid #fed7aa;
-                padding: 12px;
-                border-radius: 6px;
-                page-break-inside: avoid;
-            }
-            .print-recommendations h4 { margin: 0 0 5px 0; font-size: 12px; color: #9a3412; }
-            .print-recommendations p { margin: 0; white-space: pre-wrap; font-size: 10px; color: #431407; }
-
             .print-footer {
                 margin-top: 30px;
+                border-top: 1px solid #e5e7eb;
                 padding-top: 15px;
-                border-top: 1px solid #d1d5db;
                 text-align: center;
                 page-break-inside: avoid;
             }
-            .print-footer .prof-name { font-weight: bold; font-size: 14px; margin: 0; text-transform: uppercase; }
-            .print-footer .prof-title { margin: 2px 0; color: #4b5563; font-size: 11px; }
-            .print-footer .prof-cref { margin: 0; font-weight: bold; font-size: 11px; color: #111827; }
+            .print-recommendations {
+                background: #fdf8f6;
+                border: 1px solid #fed7aa;
+                padding: 12px;
+                border-radius: 8px;
+                margin-bottom: 15px;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
         }
+
+        /* Scrollbar customizada */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-body); }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
     </style>
 </head>
 <body data-theme="Masculino" class="min-h-screen pb-20">
 
-    <!-- ==========================================
-         INTERFACE PRINCIPAL DO SISTEMA
-         ========================================== -->
+    <!-- ÁREA PRINCIPAL DO SISTEMA -->
     <div id="app-container" class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         
-        <!-- Cabeçalho -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 pb-4 border-b border-opacity-20" style="border-color: var(--border-color)">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
             <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-xl flex items-center justify-center bg-primary text-white text-2xl shadow-lg">
-                    <i class="fas fa-dumbbell"></i>
+                <div class="bg-primary p-3 rounded-xl shadow-lg text-white">
+                    <i class="fas fa-dumbbell text-2xl"></i>
                 </div>
                 <div>
                     <h1 class="text-2xl font-bold tracking-tight">PowFit Pro</h1>
                     <p class="text-xs var(--text-muted)">Plataforma Profissional de Prescrição</p>
                 </div>
             </div>
-            <button onclick="generatePrint()" class="btn-primary w-full sm:w-auto px-6 py-3 rounded-xl font-medium shadow-lg flex items-center justify-center gap-2 text-sm">
-                <i class="fas fa-print"></i> Gerar Ficha para Impressão
+            <button onclick="generatePrint()" class="btn-primary px-6 py-3 rounded-xl font-medium shadow-lg flex items-center gap-2 hover:scale-105 transition-transform">
+                <i class="fas fa-print"></i> Imprimir Ficha A4
             </button>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
-            <!-- ==========================================
-                 COLUNA ESQUERDA: DADOS DO ALUNO
-                 ========================================== -->
+            <!-- COLUNA ESQUERDA: Dados do Aluno e Configurações -->
             <div class="lg:col-span-4 space-y-6">
                 
-                <!-- Dados Pessoais -->
+                <!-- Card: Dados do Aluno -->
                 <div class="card rounded-2xl p-5 shadow-sm">
-                    <h2 class="text-sm font-bold uppercase tracking-wider mb-4 flex items-center gap-2 text-primary">
-                        <i class="fas fa-user-circle"></i> Perfil do Aluno
+                    <h2 class="text-lg font-semibold mb-4 flex items-center gap-2 border-b border-opacity-20 pb-2" style="border-color: var(--border-color)">
+                        <i class="fas fa-user text-primary"></i> Dados do Aluno
                     </h2>
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-xs font-medium mb-1 opacity-80">Nome Completo</label>
-                            <input type="text" id="stu-name" class="input-field w-full rounded-lg px-3 py-2.5 text-sm" placeholder="Nome do aluno">
+                            <label class="block text-sm font-medium mb-1">Nome Completo</label>
+                            <input type="text" id="stu-name" class="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder="Nome do aluno">
                         </div>
-                        <div class="grid grid-cols-2 gap-3">
+                        <div class="grid grid-cols-3 gap-3">
                             <div>
-                                <label class="block text-xs font-medium mb-1 opacity-80">Idade</label>
-                                <input type="number" id="stu-age" class="input-field w-full rounded-lg px-3 py-2.5 text-sm" placeholder="Ex: 28">
+                                <label class="block text-sm font-medium mb-1">Idade</label>
+                                <input type="number" id="stu-age" class="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder="Anos">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium mb-1 opacity-80">Peso (kg)</label>
-                                <input type="number" id="stu-weight" step="0.1" class="input-field w-full rounded-lg px-3 py-2.5 text-sm" placeholder="Ex: 75.5">
+                                <label class="block text-sm font-medium mb-1">Peso (kg)</label>
+                                <input type="number" id="stu-weight" oninput="calculateBMI()" class="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder="Ex: 75.5">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Altura (m)</label>
+                                <input type="number" step="0.01" id="stu-height" oninput="calculateBMI()" class="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder="Ex: 1.75">
                             </div>
                         </div>
+                        
+                        <!-- Mostrador de IMC -->
+                        <div id="bmi-display" class="hidden bg-black bg-opacity-10 rounded-lg p-2 text-center text-sm font-medium">
+                            IMC: <span id="bmi-value" class="text-primary font-bold"></span> - <span id="bmi-status"></span>
+                        </div>
+
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-xs font-medium mb-1 opacity-80">Gênero (Muda o Tema)</label>
-                                <select id="stu-gender" onchange="changeTheme()" class="input-field w-full rounded-lg px-3 py-2.5 text-sm font-medium">
+                                <label class="block text-sm font-medium mb-1">Gênero</label>
+                                <select id="stu-gender" onchange="changeTheme()" class="input-field w-full rounded-lg px-3 py-2 text-sm">
                                     <option value="Masculino">Masculino</option>
                                     <option value="Feminino">Feminino</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs font-medium mb-1 opacity-80">Nível</label>
-                                <select id="stu-level" class="input-field w-full rounded-lg px-3 py-2.5 text-sm">
+                                <label class="block text-sm font-medium mb-1">Nível</label>
+                                <select id="stu-level" class="input-field w-full rounded-lg px-3 py-2 text-sm">
                                     <option>Iniciante</option>
                                     <option>Intermediário</option>
                                     <option>Avançado</option>
@@ -289,10 +297,10 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium mb-1 opacity-80">Objetivo Principal</label>
-                            <select id="stu-objective" class="input-field w-full rounded-lg px-3 py-2.5 text-sm">
-                                <option>Hipertrofia</option>
+                            <label class="block text-sm font-medium mb-1">Objetivo</label>
+                            <select id="stu-objective" class="input-field w-full rounded-lg px-3 py-2 text-sm">
                                 <option>Emagrecimento</option>
+                                <option>Hipertrofia</option>
                                 <option>Definição</option>
                                 <option>Condicionamento</option>
                                 <option>Resistência</option>
@@ -302,11 +310,10 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium mb-1 opacity-80">Frequência Semanal</label>
-                            <select id="stu-freq" class="input-field w-full rounded-lg px-3 py-2.5 text-sm">
+                            <label class="block text-sm font-medium mb-1">Frequência Semanal</label>
+                            <select id="stu-freq" class="input-field w-full rounded-lg px-3 py-2 text-sm">
                                 <option>3 dias</option>
-                                <option>4 dias</option>
-                                <option selected>5 dias</option>
+                                <option>5 dias</option>
                                 <option>6 dias</option>
                                 <option>Personalizado</option>
                             </select>
@@ -314,55 +321,53 @@
                     </div>
                 </div>
 
-                <!-- Estado de Saúde -->
+                <!-- Card: Estado de Saúde -->
                 <div class="card rounded-2xl p-5 shadow-sm">
-                    <h2 class="text-sm font-bold uppercase tracking-wider mb-4 flex items-center gap-2 text-primary">
-                        <i class="fas fa-notes-medical"></i> Estado de Saúde
+                    <h2 class="text-lg font-semibold mb-2 flex items-center gap-2 border-b border-opacity-20 pb-2" style="border-color: var(--border-color)">
+                        <i class="fas fa-notes-medical text-primary"></i> Estado de Saúde
                     </h2>
-                    <p class="text-xs opacity-60 mb-3">Apenas informativo. Marque as opções aplicáveis.</p>
-                    <div class="grid grid-cols-2 gap-y-2 gap-x-1 text-sm" id="health-container">
+                    <p class="text-xs opacity-60 mb-4">Selecione as condições (apenas informativo, não bloqueia o sistema).</p>
+                    
+                    <div class="space-y-2 max-h-64 overflow-y-auto pr-2" id="health-container">
                         <!-- Gerado via JS -->
                     </div>
                 </div>
 
-                <!-- Configurações e Recomendações -->
+                <!-- Card: Configurações Finais -->
                 <div class="card rounded-2xl p-5 shadow-sm">
-                    <h2 class="text-sm font-bold uppercase tracking-wider mb-4 flex items-center gap-2 text-primary">
-                        <i class="fas fa-clipboard-check"></i> Detalhes da Ficha
+                    <h2 class="text-lg font-semibold mb-4 flex items-center gap-2 border-b border-opacity-20 pb-2" style="border-color: var(--border-color)">
+                        <i class="fas fa-cog text-primary"></i> Detalhes da Prescrição
                     </h2>
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-xs font-medium mb-1 opacity-80">Validade do Treino</label>
-                            <select id="stu-validity" class="input-field w-full rounded-lg px-3 py-2.5 text-sm">
+                            <label class="block text-sm font-medium mb-1">Validade do Treino</label>
+                            <select id="stu-validity" class="input-field w-full rounded-lg px-3 py-2 text-sm">
                                 <option>15 dias</option>
                                 <option selected>30 dias</option>
-                                <option>45 dias</option>
                                 <option>60 dias</option>
                                 <option>90 dias</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium mb-1 opacity-80">Recomendações (Descanso, Cardio, Hidratação...)</label>
-                            <textarea id="stu-recs" rows="4" class="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder="Ex: Beber 3L de água por dia. Fazer 20 min de cardio após o treino."></textarea>
+                            <label class="block text-sm font-medium mb-1">Recomendações (Descanso, Cardio, Cuidados)</label>
+                            <textarea id="stu-recs" rows="4" class="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder="Ex: Manter hidratação alta. Descanso de 60s entre séries."></textarea>
                         </div>
                     </div>
                 </div>
 
             </div>
 
-            <!-- ==========================================
-                 COLUNA DIREITA: MONTAGEM DOS TREINOS
-                 ========================================== -->
+            <!-- COLUNA DIREITA: Montagem dos Treinos -->
             <div class="lg:col-span-8 space-y-6">
                 
-                <div class="flex flex-col sm:flex-row justify-between items-center bg-opacity-10 p-5 rounded-2xl card border-dashed border-2 gap-4" style="border-color: var(--primary)">
+                <div class="flex justify-between items-center bg-opacity-10 p-5 rounded-2xl card border-dashed border-2" style="border-color: var(--primary)">
                     <div>
                         <h2 class="text-xl font-bold flex items-center gap-2">
-                            Área de Montagem Livre
+                            <i class="fas fa-clipboard-list text-primary"></i> Montagem Livre de Treinos
                         </h2>
-                        <p class="text-sm opacity-70 mt-1">Crie treinos, adicione exercícios e organize conforme sua metodologia.</p>
+                        <p class="text-sm opacity-70 mt-1">Crie as fichas e adicione os exercícios com controle total.</p>
                     </div>
-                    <button onclick="addWorkout()" class="btn-primary w-full sm:w-auto px-5 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2">
+                    <button onclick="addWorkout()" class="btn-primary px-5 py-2.5 rounded-xl text-sm font-medium flex items-center gap-2 shadow-md">
                         <i class="fas fa-plus"></i> Novo Treino
                     </button>
                 </div>
@@ -376,66 +381,62 @@
         </div>
     </div>
 
-    <!-- ==========================================
-         MODAL DE BANCO DE EXERCÍCIOS
-         ========================================== -->
-    <div id="exercise-modal" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm hidden z-50 flex items-center justify-center p-2 sm:p-4 opacity-0 transition-opacity duration-300">
-        <div class="card w-full max-w-5xl rounded-2xl shadow-2xl flex flex-col h-[90vh] sm:h-[85vh] transform scale-95 transition-transform duration-300" id="modal-content">
-            
-            <div class="p-4 sm:p-5 border-b flex justify-between items-center" style="border-color: var(--border-color)">
+    <!-- MODAL DE EXERCÍCIOS -->
+    <div id="exercise-modal" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4 sm:p-6">
+        <div class="card w-full max-w-5xl rounded-2xl shadow-2xl flex flex-col h-[85vh]">
+            <div class="p-5 border-b flex justify-between items-center bg-black bg-opacity-10" style="border-color: var(--border-color)">
                 <div>
-                    <h3 class="text-lg sm:text-xl font-bold flex items-center gap-2">
-                        <i class="fas fa-search text-primary"></i> Banco de Exercícios
-                    </h3>
-                    <p class="text-xs opacity-60 mt-1">Clique nos exercícios para adicioná-los diretamente ao treino.</p>
+                    <h3 class="text-xl font-bold flex items-center gap-2"><i class="fas fa-search text-primary"></i> Banco de Exercícios</h3>
+                    <p class="text-xs opacity-70 mt-1">Clique nos exercícios para adicionar à ficha. Você pode adicionar vários antes de fechar.</p>
                 </div>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 bg-black bg-opacity-10 hover:bg-opacity-20 w-8 h-8 rounded-full flex items-center justify-center transition-colors">
-                    <i class="fas fa-times"></i>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition-colors bg-white bg-opacity-10 p-2 rounded-full w-10 h-10 flex items-center justify-center">
+                    <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
             
             <div class="flex flex-col md:flex-row flex-1 overflow-hidden">
                 <!-- Categorias -->
-                <div class="w-full md:w-1/4 border-b md:border-b-0 md:border-r overflow-x-auto md:overflow-y-auto p-3 flex md:flex-col gap-2" style="border-color: var(--border-color)" id="modal-categories">
+                <div class="w-full md:w-1/4 border-r overflow-y-auto p-4 space-y-2 bg-black bg-opacity-5" style="border-color: var(--border-color)" id="modal-categories">
                     <!-- Categorias via JS -->
                 </div>
                 <!-- Exercícios -->
-                <div class="w-full md:w-3/4 overflow-y-auto p-4 bg-black bg-opacity-5 relative" id="modal-exercises">
-                    <!-- Toast Notification inside modal -->
-                    <div id="add-toast" class="absolute top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg opacity-0 transition-opacity pointer-events-none z-10 flex items-center gap-2">
-                        <i class="fas fa-check-circle"></i> Adicionado!
-                    </div>
+                <div class="w-full md:w-3/4 overflow-y-auto p-6" id="modal-exercises">
                     <!-- Lista via JS -->
-                    <div id="exercises-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 pb-10"></div>
                 </div>
-            </div>
-            
-            <div class="p-4 border-t flex justify-end" style="border-color: var(--border-color)">
-                <button onclick="closeModal()" class="btn-primary px-6 py-2 rounded-xl text-sm font-bold">
-                    Concluir Seleção
-                </button>
             </div>
         </div>
     </div>
 
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast"><i class="fas fa-check-circle mr-2"></i> Exercício adicionado ao treino!</div>
 
-    <!-- ==========================================
-         ÁREA DE IMPRESSÃO (Invisível na tela)
-         ========================================== -->
+    <!-- ========================================== -->
+    <!-- ÁREA DE IMPRESSÃO (Oculta na tela)         -->
+    <!-- ========================================== -->
     <div id="print-area">
         <!-- Preenchido via JS antes de imprimir -->
     </div>
 
-    <!-- ==========================================
-         SCRIPTS E LÓGICA DO SISTEMA
-         ========================================== -->
+    <!-- SCRIPTS -->
     <script>
-        // --- BANCO DE DADOS ATUALIZADO ---
+        // --- BANCO DE DADOS ---
         const db = {
             healthOptions: [
-                "Saudável", "Sedentário", "Sobrepeso", "Obesidade", 
-                "Diabetes", "Hipertensão", "Problemas cardíacos", 
-                "Lesões", "Gestante", "Idoso"
+                { icon: '🟢', title: 'Saudável', desc: 'Manter treinos regulares 3–5x por semana, combinando musculação e cardio. Foco em evolução e constância.' },
+                { icon: '⚪', title: 'Sedentário', desc: 'Iniciar com treinos leves 2–3x por semana. Priorizar adaptação, técnica e evitar excesso de carga.' },
+                { icon: '🟡', title: 'Sobrepeso', desc: 'Treinar 3–5x por semana com foco em gasto calórico. Combinar musculação e cardio moderado.' },
+                { icon: '🔴', title: 'Obesidade', desc: 'Iniciar com exercícios de baixo impacto. Evolução gradual, priorizando saúde e segurança.' },
+                { icon: '⚖️', title: 'Baixo peso', desc: 'Foco em musculação para ganho de massa. Treinos moderados com alimentação adequada.' },
+                { icon: '🍬', title: 'Diabetes', desc: 'Treinos regulares moderados. Monitorar glicemia e evitar treinos em jejum.' },
+                { icon: '❤️', title: 'Hipertensão', desc: 'Treinos moderados, evitar prender a respiração. Priorizar controle da intensidade.' },
+                { icon: '🔵', title: 'Hipotensão', desc: 'Evitar mudanças bruscas. Manter hidratação e intensidade leve a moderada.' },
+                { icon: '💔', title: 'Problemas cardíacos', desc: 'Treinos leves com liberação médica. Monitorar frequência cardíaca.' },
+                { icon: '🦴', title: 'Problemas articulares', desc: 'Evitar impacto. Priorizar exercícios controlados e máquinas.' },
+                { icon: '🫁', title: 'Problemas respiratórios', desc: 'Treinos leves a moderados com progressão gradual. Atenção à respiração.' },
+                { icon: '⚠️', title: 'Lesões', desc: 'Adaptar exercícios. Evitar dor e focar na recuperação.' },
+                { icon: '🤰', title: 'Gestante', desc: 'Treinos leves a moderados, sem impacto ou risco. Foco em mobilidade e bem-estar.' },
+                { icon: '🤱', title: 'Lactante', desc: 'Treinar normalmente com atenção à hidratação e energia.' },
+                { icon: '👴', title: 'Idoso', desc: 'Foco em força, equilíbrio e mobilidade. Intensidade moderada com segurança.' }
             ],
             categories: {
                 "🔥 PEITO": [
@@ -451,32 +452,40 @@
                     "Facepull (puxada de cima para baixo)", "Encolhimento (Trapézio)"
                 ],
                 "🦵 PERNAS": [
-                    "Agachamento Livre", "Agachamento Taça", "Agachamento com Barra", "Agachamento no Smith", 
-                    "Squat", "Hack Machine", "Leg Press", "Agachamento Sumô", "Agachamento Sissy (Livre)", 
-                    "Afundo", "Passada", "Avanço", "Búlgaro", "Step-up", "Levantamento Terra", 
-                    "Levantamento Terra Romeno", "Terra Sumô", "Stiff", "Bom Dia", "Mesa Flexora", 
-                    "Cadeira Flexora", "Elevação Pélvica", "Extensão de Quadril (Glúteo Máximo)", 
-                    "Extensão Cruzada (Glúteo Médio)", "Abdução no Cross (Glúteo Médio + Mínimo)", 
-                    "Coice", "Cachorrinho", "Caranguejo", "Cadeira Extensora", "Adução", "Abdução", 
+                    "Agachamento Livre", "Agachamento Taça", "Agachamento com Barra", 
+                    "Agachamento no Smith", "Squat", "Hack Machine", "Leg Press", 
+                    "Agachamento Sumô", "Agachamento Sissy (Livre)", "Afundo", "Passada", 
+                    "Avanço", "Búlgaro", "Step-up", "Levantamento Terra", 
+                    "Levantamento Terra Romeno", "Terra Sumô", "Stiff", "Bom Dia", 
+                    "Mesa Flexora", "Cadeira Flexora", "Elevação Pélvica", 
+                    "Extensão de Quadril (Glúteo Máximo)", "Extensão Cruzada (Glúteo Médio)", 
+                    "Abdução no Cross (Glúteo Médio + Mínimo)", "Coice", "Cachorrinho", 
+                    "Caranguejo", "Cadeira Extensora", "Adução", "Abdução", 
                     "Cadeira Abdutora Inclinada", "Flexão Nórdica", "Flexão Nórdica Invertida", 
-                    "Panturrilha em Pé (Máquina)", "Panturrilha no Leg Press", "Panturrilha Banco", 
-                    "Panturrilha Squat", "Panturrilha Unilateral"
+                    "Panturrilha em Pé (Máquina)", "Panturrilha no Leg Press", 
+                    "Panturrilha Banco", "Panturrilha Squat", "Panturrilha Unilateral"
                 ],
-                "💪 BRAÇOS": [
-                    "Rosca Direta", "Rosca Alternada", "Rosca 21", "Rosca Scott Barra W", 
-                    "Rosca Scott Unilateral", "Rosca Scott com Halteres", "Rosca Martelo", 
-                    "Rosca Cross", "Rosca Concentrada", "Rosca Inversa", "Rosca Banco Inclinado",
-                    "Triceps Pulley Unilateral", "Tríceps Pulley Barra", "Tríceps Pulley Corda", 
-                    "Tríceps Pulley Pegada Inversa", "Tríceps Francês na Corda", "Tríceps Francês com Halter", 
-                    "Tríceps Francês Unilateral", "Tríceps Cruzado Polia Dupla", "Tríceps Coice Unilateral", 
-                    "Tríceps Arremesso", "Tríceps Testa", "Mergulho no Banco"
-                ],
+                "💪 BRAÇOS": {
+                    "🔹 Bíceps": [
+                        "Rosca Direta", "Rosca Alternada", "Rosca 21", "Rosca Scott Barra W", 
+                        "Rosca Scott Unilateral", "Rosca Scott com Halteres", "Rosca Martelo", 
+                        "Rosca Cross", "Rosca Concentrada", "Rosca Inversa", "Rosca Banco Inclinado"
+                    ],
+                    "🔹 Tríceps": [
+                        "Triceps Pulley Unilateral", "Tríceps Pulley Barra", "Tríceps Pulley Corda", 
+                        "Tríceps Pulley Pegada Inversa", "Tríceps Francês na Corda", 
+                        "Tríceps Francês com Halter", "Tríceps Francês Unilateral", 
+                        "Tríceps Cruzado Polia Dupla", "Tríceps Coice Unilateral", 
+                        "Tríceps Arremesso", "Tríceps Testa", "Mergulho no Banco"
+                    ]
+                },
                 "🪨 OMBROS": [
                     "Elevação Frontal", "Elevação Frontal no Cross", "Elevação Lateral", 
-                    "Elevação Lateral na Polia", "Elevação Lateral Sentado", "Desenvolvimento com Halteres", 
-                    "Desenvolvimento com Barra", "Arnold Press", "Elevação Borboleta", 
-                    "Crucifixo Inverso Sentado com Halteres", "Crucifixo Inverso na Polia", 
-                    "Crucifixo Inverso Unilateral na Polia", "Facepull (puxada reta)", "Remada Alta"
+                    "Elevação Lateral na Polia", "Elevação Lateral Sentado", 
+                    "Desenvolvimento com Halteres", "Desenvolvimento com Barra", "Arnold Press", 
+                    "Elevação Borboleta", "Crucifixo Inverso Sentado com Halteres", 
+                    "Crucifixo Inverso na Polia", "Crucifixo Inverso Unilateral na Polia", 
+                    "Facepull (puxada reta)", "Remada Alta"
                 ],
                 "🧠 ABDÔMEN": [
                     "Infra com Elevação de Perna", "Abdominal Supra", "Abdominal Remador", 
@@ -494,7 +503,7 @@
             ]
         };
 
-        // --- ESTADO GLOBAL DA APLICAÇÃO ---
+        // --- ESTADO DA APLICAÇÃO ---
         let state = {
             workouts: [
                 { id: generateId(), title: "Treino A", exercises: [] }
@@ -509,7 +518,7 @@
             renderWorkouts();
         }
 
-        // --- FUNÇÕES DE UTILIDADE E INTERFACE ---
+        // --- FUNÇÕES DE INTERFACE ---
         function changeTheme() {
             const gender = document.getElementById('stu-gender').value;
             document.body.setAttribute('data-theme', gender);
@@ -519,17 +528,56 @@
             return Math.random().toString(36).substr(2, 9);
         }
 
+        function calculateBMI() {
+            const weight = parseFloat(document.getElementById('stu-weight').value);
+            const height = parseFloat(document.getElementById('stu-height').value);
+            const bmiDisplay = document.getElementById('bmi-display');
+            const bmiValue = document.getElementById('bmi-value');
+            const bmiStatus = document.getElementById('bmi-status');
+
+            if (weight > 0 && height > 0) {
+                const bmi = (weight / (height * height)).toFixed(1);
+                bmiValue.innerText = bmi;
+                
+                let status = "";
+                if (bmi < 18.5) status = "Baixo peso";
+                else if (bmi < 24.9) status = "Peso normal";
+                else if (bmi < 29.9) status = "Sobrepeso";
+                else if (bmi < 34.9) status = "Obesidade I";
+                else if (bmi < 39.9) status = "Obesidade II";
+                else status = "Obesidade III";
+
+                bmiStatus.innerText = status;
+                bmiDisplay.classList.remove('hidden');
+            } else {
+                bmiDisplay.classList.add('hidden');
+            }
+        }
+
         function renderHealthOptions() {
             const container = document.getElementById('health-container');
             container.innerHTML = db.healthOptions.map(opt => `
-                <label class="flex items-center space-x-2 cursor-pointer p-1.5 rounded-lg hover:bg-black hover:bg-opacity-5 transition">
-                    <input type="checkbox" value="${opt}" class="health-cb rounded border-gray-400 text-primary focus:ring-primary w-4 h-4">
-                    <span>${opt}</span>
+                <label class="block relative cursor-pointer">
+                    <input type="checkbox" value="${opt.title}" class="health-cb sr-only">
+                    <div class="health-card rounded-xl p-3 flex gap-3 items-start">
+                        <div class="text-xl mt-0.5">${opt.icon}</div>
+                        <div>
+                            <div class="font-semibold text-sm">${opt.title}</div>
+                            <div class="text-xs opacity-70 mt-1 leading-relaxed">${opt.desc}</div>
+                        </div>
+                    </div>
                 </label>
             `).join('');
         }
 
-        // --- LÓGICA DE GERENCIAMENTO DE TREINOS ---
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerHTML = `<i class="fas fa-check-circle mr-2"></i> ${message}`;
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 2000);
+        }
+
+        // --- LÓGICA DE TREINOS ---
         function getNextWorkoutLetter() {
             const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             const currentCount = state.workouts.length;
@@ -558,7 +606,7 @@
         }
 
         function removeWorkout(id) {
-            if(confirm("Confirma a exclusão deste treino e todos os seus exercícios?")) {
+            if(confirm("Tem certeza que deseja remover este treino inteiro?")) {
                 state.workouts = state.workouts.filter(w => w.id !== id);
                 renderWorkouts();
             }
@@ -569,7 +617,7 @@
             if(workout) workout.title = newTitle;
         }
 
-        // --- LÓGICA DE GERENCIAMENTO DE EXERCÍCIOS ---
+        // --- LÓGICA DE EXERCÍCIOS ---
         function removeExercise(workoutId, exIndex) {
             const workout = state.workouts.find(w => w.id === workoutId);
             workout.exercises.splice(exIndex, 1);
@@ -597,59 +645,52 @@
             }
         }
 
-        // --- RENDERIZAÇÃO DOS TREINOS NA TELA ---
+        // --- RENDERIZAÇÃO DE TREINOS ---
         function renderWorkouts() {
             const container = document.getElementById('workouts-container');
             container.innerHTML = '';
 
-            if (state.workouts.length === 0) {
-                container.innerHTML = `<div class="text-center p-10 opacity-50 border-2 border-dashed rounded-xl" style="border-color: var(--border-color)">Nenhum treino criado. Clique em "Novo Treino" para começar.</div>`;
-                return;
-            }
-
             state.workouts.forEach(workout => {
                 let exercisesHtml = '';
                 if (workout.exercises.length === 0) {
-                    exercisesHtml = `<div class="text-center p-8 text-sm opacity-50 italic bg-black bg-opacity-5 rounded-lg m-3">Nenhum exercício neste treino.</div>`;
+                    exercisesHtml = `<div class="text-center p-8 text-sm opacity-50 italic">Nenhum exercício adicionado a este treino. Clique no botão abaixo para adicionar.</div>`;
                 } else {
                     exercisesHtml = workout.exercises.map((ex, idx) => `
-                        <div class="flex flex-col sm:flex-row gap-3 p-4 items-start sm:items-center border-b last:border-0 border-opacity-10 hover:bg-black hover:bg-opacity-[0.02] transition" style="border-color: var(--border-color)">
+                        <div class="flex flex-col xl:flex-row gap-3 p-4 items-start xl:items-center border-b last:border-0 border-opacity-10 hover:bg-black hover:bg-opacity-5 transition" style="border-color: var(--border-color)">
                             
-                            <!-- Botões de ordenação -->
-                            <div class="flex sm:flex-col gap-1 hidden sm:flex opacity-50 hover:opacity-100 transition">
-                                <button onclick="moveExercise('${workout.id}', ${idx}, 'up')" class="text-xs p-1 rounded hover:bg-gray-300 dark:hover:bg-gray-700" title="Mover para cima"><i class="fas fa-chevron-up"></i></button>
-                                <button onclick="moveExercise('${workout.id}', ${idx}, 'down')" class="text-xs p-1 rounded hover:bg-gray-300 dark:hover:bg-gray-700" title="Mover para baixo"><i class="fas fa-chevron-down"></i></button>
+                            <!-- Controles de ordem -->
+                            <div class="flex xl:flex-col gap-1 hidden xl:flex">
+                                <button onclick="moveExercise('${workout.id}', ${idx}, 'up')" class="text-xs p-1 rounded hover:bg-black hover:bg-opacity-10" title="Subir"><i class="fas fa-chevron-up"></i></button>
+                                <button onclick="moveExercise('${workout.id}', ${idx}, 'down')" class="text-xs p-1 rounded hover:bg-black hover:bg-opacity-10" title="Descer"><i class="fas fa-chevron-down"></i></button>
                             </div>
 
-                            <!-- Nome do Exercício -->
-                            <div class="flex-1 font-medium w-full sm:w-1/3">
-                                <div class="text-[10px] font-bold opacity-60 uppercase tracking-wider mb-0.5" style="color: var(--primary)">${ex.category.replace(/[^a-zA-ZÀ-ÿ\s]/g, '')}</div>
-                                <div class="leading-tight text-sm">${ex.name}</div>
+                            <!-- Nome -->
+                            <div class="flex-1 font-medium w-full xl:w-auto">
+                                <div class="text-[10px] opacity-60 uppercase tracking-wider font-bold">${ex.category}</div>
+                                <div class="text-sm mt-0.5">${ex.name}</div>
                             </div>
 
-                            <!-- Inputs Editáveis -->
-                            <div class="flex flex-wrap sm:flex-nowrap gap-2 w-full sm:flex-1">
-                                <div class="flex items-center gap-1">
-                                    <input type="text" value="${ex.sets}" onchange="updateExercise('${workout.id}', ${idx}, 'sets', this.value)" class="input-field w-12 sm:w-16 rounded-md px-2 py-1.5 text-sm text-center" placeholder="Séries">
-                                    <span class="opacity-50 text-xs px-1">x</span>
-                                    <input type="text" value="${ex.reps}" onchange="updateExercise('${workout.id}', ${idx}, 'reps', this.value)" class="input-field w-16 sm:w-20 rounded-md px-2 py-1.5 text-sm text-center" placeholder="Reps">
-                                </div>
+                            <!-- Campos Editáveis -->
+                            <div class="flex flex-wrap gap-2 w-full xl:w-auto items-center">
+                                <input type="text" value="${ex.sets}" onchange="updateExercise('${workout.id}', ${idx}, 'sets', this.value)" class="input-field w-16 rounded px-2 py-1.5 text-sm text-center font-semibold" placeholder="Séries">
+                                <span class="opacity-50 text-xs">X</span>
+                                <input type="text" value="${ex.reps}" onchange="updateExercise('${workout.id}', ${idx}, 'reps', this.value)" class="input-field w-24 rounded px-2 py-1.5 text-sm text-center font-semibold" placeholder="Reps">
                                 
-                                <select onchange="updateExercise('${workout.id}', ${idx}, 'technique', this.value)" class="input-field w-full sm:w-32 rounded-md px-2 py-1.5 text-sm">
+                                <select onchange="updateExercise('${workout.id}', ${idx}, 'technique', this.value)" class="input-field w-36 rounded px-2 py-1.5 text-xs">
                                     ${db.techniques.map(t => `<option value="${t}" ${ex.technique === t ? 'selected' : ''}>${t}</option>`).join('')}
                                 </select>
                                 
-                                <input type="text" value="${ex.obs}" onchange="updateExercise('${workout.id}', ${idx}, 'obs', this.value)" class="input-field w-full sm:flex-1 rounded-md px-2 py-1.5 text-sm" placeholder="Observações livres...">
+                                <input type="text" value="${ex.obs}" onchange="updateExercise('${workout.id}', ${idx}, 'obs', this.value)" class="input-field flex-1 xl:w-48 rounded px-2 py-1.5 text-xs" placeholder="Observações livres...">
                             </div>
 
-                            <!-- Ações Extras (Mobile + Delete) -->
-                            <div class="flex items-center gap-2 w-full sm:w-auto justify-end mt-2 sm:mt-0">
-                                <div class="sm:hidden flex gap-2 mr-auto">
-                                    <button onclick="moveExercise('${workout.id}', ${idx}, 'up')" class="bg-gray-200 dark:bg-gray-700 text-xs px-3 py-1.5 rounded"><i class="fas fa-arrow-up"></i></button>
-                                    <button onclick="moveExercise('${workout.id}', ${idx}, 'down')" class="bg-gray-200 dark:bg-gray-700 text-xs px-3 py-1.5 rounded"><i class="fas fa-arrow-down"></i></button>
+                            <!-- Ações -->
+                            <div class="flex items-center gap-2 w-full xl:w-auto justify-end mt-2 xl:mt-0">
+                                <div class="xl:hidden flex gap-2 mr-auto">
+                                    <button onclick="moveExercise('${workout.id}', ${idx}, 'up')" class="bg-black bg-opacity-10 text-xs p-2 rounded"><i class="fas fa-arrow-up"></i></button>
+                                    <button onclick="moveExercise('${workout.id}', ${idx}, 'down')" class="bg-black bg-opacity-10 text-xs p-2 rounded"><i class="fas fa-arrow-down"></i></button>
                                 </div>
-                                <button onclick="removeExercise('${workout.id}', ${idx})" class="text-red-500 hover:bg-red-500 hover:text-white w-8 h-8 rounded-md flex items-center justify-center transition" title="Remover Exercício">
-                                    <i class="fas fa-trash-alt"></i>
+                                <button onclick="removeExercise('${workout.id}', ${idx})" class="text-red-500 hover:bg-red-500 hover:text-white p-2 rounded transition" title="Remover Exercício">
+                                    <i class="fas fa-trash"></i>
                                 </button>
                             </div>
                         </div>
@@ -657,19 +698,17 @@
                 }
 
                 const workoutCard = `
-                    <div class="card rounded-2xl overflow-hidden shadow-sm">
-                        <div class="p-4 border-b flex justify-between items-center" style="border-color: var(--border-color); background-color: var(--header-bg);">
+                    <div class="card rounded-2xl overflow-hidden shadow-md border-t-4" style="border-top-color: var(--primary)">
+                        <div class="p-4 border-b flex justify-between items-center" style="border-color: var(--border-color); background-color: rgba(0,0,0,0.02)">
                             <div class="flex items-center gap-3 w-2/3">
-                                <div class="w-8 h-8 rounded bg-black bg-opacity-10 flex items-center justify-center text-primary">
-                                    <i class="fas fa-list-ol"></i>
-                                </div>
-                                <input type="text" value="${workout.title}" onchange="updateWorkoutTitle('${workout.id}', this.value)" class="input-field bg-transparent font-bold text-lg w-full px-2 py-1 rounded border-transparent focus:border-primary focus:bg-opacity-50">
+                                <div class="bg-primary bg-opacity-20 text-primary p-2 rounded-lg"><i class="fas fa-dumbbell"></i></div>
+                                <input type="text" value="${workout.title}" onchange="updateWorkoutTitle('${workout.id}', this.value)" class="input-field bg-transparent font-bold text-lg w-full px-2 py-1 rounded border-transparent focus:border-primary">
                             </div>
                             <div class="flex gap-2">
-                                <button onclick="duplicateWorkout('${workout.id}')" class="text-sm px-3 py-1.5 rounded-lg bg-black bg-opacity-5 hover:bg-opacity-10 transition font-medium flex items-center gap-2" title="Duplicar Treino Inteiro">
+                                <button onclick="duplicateWorkout('${workout.id}')" class="text-sm px-3 py-1.5 rounded bg-black bg-opacity-5 hover:bg-opacity-10 transition tooltip flex items-center gap-2" title="Duplicar Treino">
                                     <i class="fas fa-copy"></i> <span class="hidden sm:inline">Duplicar</span>
                                 </button>
-                                <button onclick="removeWorkout('${workout.id}')" class="text-sm px-3 py-1.5 text-red-500 rounded-lg bg-red-500 bg-opacity-10 hover:bg-opacity-20 transition font-medium" title="Excluir Treino">
+                                <button onclick="removeWorkout('${workout.id}')" class="text-sm px-3 py-1.5 text-red-500 rounded bg-red-500 bg-opacity-10 hover:bg-opacity-100 hover:text-white transition tooltip" title="Excluir Treino">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -679,9 +718,9 @@
                             ${exercisesHtml}
                         </div>
 
-                        <div class="p-4 border-t" style="border-color: var(--border-color)">
-                            <button onclick="openModal('${workout.id}')" class="w-full py-3 rounded-xl font-bold text-sm border-2 border-dashed border-opacity-50 hover:border-solid hover:bg-primary hover:text-white hover:border-primary transition flex justify-center items-center gap-2 text-primary" style="border-color: var(--primary)">
-                                <i class="fas fa-plus-circle"></i> Adicionar Exercício neste Treino
+                        <div class="p-4 bg-black bg-opacity-5 border-t" style="border-color: var(--border-color)">
+                            <button onclick="openModal('${workout.id}')" class="w-full btn-primary py-3 rounded-xl font-medium text-sm border border-dashed border-opacity-50 hover:border-solid transition flex justify-center items-center gap-2">
+                                <i class="fas fa-plus-circle"></i> Adicionar Exercício Neste Treino
                             </button>
                         </div>
                     </div>
@@ -690,42 +729,23 @@
             });
         }
 
-        // --- LÓGICA DO MODAL (BANCO DE EXERCÍCIOS) ---
+        // --- MODAL E BANCO DE EXERCÍCIOS ---
         function openModal(workoutId) {
             state.activeModalWorkoutId = workoutId;
-            const modal = document.getElementById('exercise-modal');
-            const content = document.getElementById('modal-content');
-            
-            modal.classList.remove('hidden');
-            // Pequeno delay para animação de fade in e scale
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                content.classList.remove('scale-95');
-                content.classList.add('scale-100');
-            }, 10);
-            
+            document.getElementById('exercise-modal').classList.remove('hidden');
             renderModalCategories();
             renderModalExercises();
         }
 
         function closeModal() {
-            const modal = document.getElementById('exercise-modal');
-            const content = document.getElementById('modal-content');
-            
-            modal.classList.add('opacity-0');
-            content.classList.remove('scale-100');
-            content.classList.add('scale-95');
-            
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                state.activeModalWorkoutId = null;
-            }, 300);
+            document.getElementById('exercise-modal').classList.add('hidden');
+            state.activeModalWorkoutId = null;
         }
 
         function renderModalCategories() {
             const container = document.getElementById('modal-categories');
             container.innerHTML = Object.keys(db.categories).map(cat => `
-                <button onclick="setModalCategory('${cat}')" class="whitespace-nowrap md:whitespace-normal w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition ${state.activeCategory === cat ? 'bg-primary text-white shadow-md' : 'hover:bg-black hover:bg-opacity-10 opacity-70'}">
+                <button onclick="setModalCategory('${cat}')" class="w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition ${state.activeCategory === cat ? 'bg-primary text-white shadow-md' : 'hover:bg-black hover:bg-opacity-10'}">
                     ${cat}
                 </button>
             `).join('');
@@ -738,49 +758,57 @@
         }
 
         function renderModalExercises() {
-            const container = document.getElementById('exercises-grid');
-            const exercises = db.categories[state.activeCategory];
+            const container = document.getElementById('modal-exercises');
+            const categoryData = db.categories[state.activeCategory];
             
-            container.innerHTML = exercises.map((ex, idx) => `
-                <button id="btn-ex-${idx}" onclick="addExerciseToWorkout('${ex}', 'btn-ex-${idx}')" class="card p-3 rounded-xl text-left text-sm font-medium border hover:border-primary transition flex justify-between items-center group relative overflow-hidden">
-                    <span class="relative z-10">${ex}</span>
-                    <i class="fas fa-plus text-primary opacity-0 group-hover:opacity-100 transition relative z-10"></i>
-                </button>
-            `).join('');
+            container.innerHTML = '';
+
+            // Se for um objeto (como BRAÇOS que tem Bíceps e Tríceps)
+            if (!Array.isArray(categoryData) && typeof categoryData === 'object') {
+                for (const subCat in categoryData) {
+                    container.innerHTML += `
+                        <h4 class="text-sm font-bold text-primary mb-3 mt-4 border-b border-opacity-20 pb-1" style="border-color: var(--border-color)">${subCat}</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            ${categoryData[subCat].map(ex => generateExerciseButton(ex, state.activeCategory)).join('')}
+                        </div>
+                    `;
+                }
+            } 
+            // Se for array normal
+            else {
+                container.innerHTML = `
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-2">
+                        ${categoryData.map(ex => generateExerciseButton(ex, state.activeCategory)).join('')}
+                    </div>
+                `;
+            }
         }
 
-        function addExerciseToWorkout(exerciseName, btnId) {
+        function generateExerciseButton(exName, catName) {
+            return `
+                <button onclick="addExerciseToWorkout('${exName}', '${catName}')" class="card p-3 rounded-xl text-left text-sm font-medium border hover:border-primary hover:text-primary transition flex justify-between items-center group shadow-sm">
+                    <span>${exName}</span>
+                    <i class="fas fa-plus bg-primary bg-opacity-10 text-primary p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition"></i>
+                </button>
+            `;
+        }
+
+        function addExerciseToWorkout(exerciseName, categoryName) {
             const workout = state.workouts.find(w => w.id === state.activeModalWorkoutId);
             if(workout) {
-                // Adiciona ao estado
+                // Remove emoji para visualização limpa na ficha
+                const cleanCategory = categoryName.replace(/[\u{1F300}-\u{1F9FF}]/gu, '').trim();
+
                 workout.exercises.push({
-                    category: state.activeCategory,
+                    category: cleanCategory,
                     name: exerciseName,
                     sets: '3',
                     reps: '10 a 12',
                     technique: 'Nenhuma',
                     obs: ''
                 });
-                
-                // Atualiza a tela de treinos no fundo
                 renderWorkouts();
-                
-                // Feedback visual no botão clicado
-                const btn = document.getElementById(btnId);
-                btn.classList.add('flash-animation');
-                setTimeout(() => btn.classList.remove('flash-animation'), 400);
-
-                // Feedback visual de Toast
-                const toast = document.getElementById('add-toast');
-                toast.classList.remove('opacity-0');
-                toast.classList.add('opacity-100');
-                
-                // Reseta o toast após 1.5s
-                clearTimeout(window.toastTimeout);
-                window.toastTimeout = setTimeout(() => {
-                    toast.classList.remove('opacity-100');
-                    toast.classList.add('opacity-0');
-                }, 1500);
+                showToast(`"${exerciseName}" adicionado!`);
             }
         }
 
@@ -788,120 +816,117 @@
         // --- LÓGICA DE IMPRESSÃO PROFISSIONAL A4 ---
         function generatePrint() {
             // Coletar dados
+            const weight = parseFloat(document.getElementById('stu-weight').value);
+            const height = parseFloat(document.getElementById('stu-height').value);
+            let imcStr = '-';
+            
+            if (weight > 0 && height > 0) {
+                imcStr = (weight / (height * height)).toFixed(1);
+            }
+
             const data = {
                 name: document.getElementById('stu-name').value || 'Não informado',
-                age: document.getElementById('stu-age').value || '--',
-                weight: document.getElementById('stu-weight').value || '--',
+                age: document.getElementById('stu-age').value || '-',
+                weight: weight ? weight + ' kg' : '-',
+                height: height ? height + ' m' : '-',
+                imc: imcStr,
                 gender: document.getElementById('stu-gender').value,
                 level: document.getElementById('stu-level').value,
                 objective: document.getElementById('stu-objective').value,
                 freq: document.getElementById('stu-freq').value,
                 validity: document.getElementById('stu-validity').value,
-                recs: document.getElementById('stu-recs').value || 'Siga o planejamento respeitando os intervalos e execuções.',
-                health: Array.from(document.querySelectorAll('.health-cb:checked')).map(cb => cb.value).join(', ') || 'Nenhuma condição reportada'
+                recs: document.getElementById('stu-recs').value || 'Siga o plano adequadamente respeitando seus limites.',
+                health: Array.from(document.querySelectorAll('.health-cb:checked')).map(cb => cb.value).join(', ') || 'Nenhuma restrição assinalada'
             };
 
             const printArea = document.getElementById('print-area');
             
-            // Construir HTML da Impressão
             let html = `
                 <div class="print-header">
                     <div>
-                        <h1>Plano de Treinamento</h1>
-                        <p>PRESCRIÇÃO INDIVIDUALIZADA E EXCLUSIVA</p>
+                        <h1 class="print-title">Plano de Treinamento</h1>
+                        <p style="margin: 5px 0 0 0; color: #4b5563; font-size: 13px;">Prescrição Individualizada</p>
                     </div>
-                    <div style="text-align: right;">
-                        <div style="font-size: 10px; color: #6b7280;">Data de Emissão</div>
-                        <div style="font-weight: bold;">${new Date().toLocaleDateString('pt-BR')}</div>
-                        <div style="font-size: 10px; color: #6b7280; margin-top: 5px;">Validade</div>
-                        <div style="font-weight: bold;">${data.validity}</div>
+                    <div style="text-align: right; font-size: 11px;">
+                        Data: ${new Date().toLocaleDateString('pt-BR')}<br>
+                        Validade: ${data.validity}
                     </div>
                 </div>
 
-                <div class="print-patient-info">
+                <div class="print-grid">
                     <div><strong>Aluno(a):</strong> ${data.name}</div>
-                    <div><strong>Idade:</strong> ${data.age} anos</div>
-                    <div><strong>Peso:</strong> ${data.weight} kg</div>
-                    
                     <div><strong>Objetivo:</strong> ${data.objective}</div>
-                    <div><strong>Nível:</strong> ${data.level}</div>
-                    <div><strong>Frequência:</strong> ${data.freq}</div>
-                    
-                    <div class="col-span-full" style="margin-top: 4px; border-top: 1px solid #e5e7eb; padding-top: 8px;">
-                        <strong>Condições de Saúde / Observações:</strong> ${data.health}
-                    </div>
+                    <div><strong>Idade:</strong> ${data.age} anos | <strong>Gênero:</strong> ${data.gender}</div>
+                    <div><strong>Peso:</strong> ${data.weight} | <strong>Altura:</strong> ${data.height} | <strong>IMC:</strong> ${data.imc}</div>
+                    <div><strong>Nível:</strong> ${data.level} | <strong>Freq:</strong> ${data.freq}</div>
+                    <div><strong>Condições Clínicas:</strong> ${data.health}</div>
                 </div>
             `;
 
-            // Construir Tabelas de Treino
-            if (state.workouts.length === 0) {
-                html += `<div style="text-align:center; padding: 20px; font-style:italic;">Nenhum treino prescrito.</div>`;
-            } else {
-                state.workouts.forEach(w => {
-                    html += `
-                        <div class="print-workout">
-                            <h3 class="print-workout-title">${w.title.toUpperCase()}</h3>
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th style="width: 35%">Exercício</th>
-                                        <th style="width: 10%; text-align: center;">Séries</th>
-                                        <th style="width: 15%; text-align: center;">Repetições</th>
-                                        <th style="width: 15%; text-align: center;">Técnica</th>
-                                        <th style="width: 25%">Observações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                    `;
-                    
-                    if (w.exercises.length === 0) {
-                        html += `<tr><td colspan="5" style="text-align:center; color:#6b7280; font-style:italic; padding: 15px;">Treino sem exercícios cadastrados</td></tr>`;
-                    } else {
-                        w.exercises.forEach(ex => {
-                            const techStr = ex.technique !== 'Nenhuma' ? ex.technique : '-';
-                            html += `
+            // Treinos
+            state.workouts.forEach(w => {
+                html += `
+                    <div class="print-workout">
+                        <h3>${w.title}</h3>
+                        <table>
+                            <thead>
                                 <tr>
-                                    <td><strong>${ex.name}</strong></td>
-                                    <td style="text-align: center;">${ex.sets}</td>
-                                    <td style="text-align: center;">${ex.reps}</td>
-                                    <td style="text-align: center;">${techStr}</td>
-                                    <td>${ex.obs || '-'}</td>
+                                    <th style="width: 32%">Exercício</th>
+                                    <th style="width: 8%">Séries</th>
+                                    <th style="width: 14%">Repetições</th>
+                                    <th style="width: 16%">Técnica</th>
+                                    <th style="width: 30%">Observações</th>
                                 </tr>
-                            `;
-                        });
-                    }
-                    
-                    html += `
-                                </tbody>
-                            </table>
-                        </div>
-                    `;
-                });
-            }
+                            </thead>
+                            <tbody>
+                `;
+                
+                if (w.exercises.length === 0) {
+                    html += `<tr><td colspan="5" style="text-align:center; color:#6b7280; font-style:italic;">Sem exercícios cadastrados</td></tr>`;
+                } else {
+                    w.exercises.forEach(ex => {
+                        const techStr = ex.technique !== 'Nenhuma' ? ex.technique : '-';
+                        html += `
+                            <tr>
+                                <td><strong>${ex.name}</strong></td>
+                                <td style="text-align:center">${ex.sets}</td>
+                                <td style="text-align:center">${ex.reps}</td>
+                                <td>${techStr}</td>
+                                <td>${ex.obs || '-'}</td>
+                            </tr>
+                        `;
+                    });
+                }
+                
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            });
 
-            // Recomendações Livres e Rodapé Profissional (Obrigatório)
+            // Recomendações e Rodapé
             html += `
                 <div class="print-recommendations">
-                    <h4>Recomendações e Cuidados</h4>
-                    <p>${data.recs}</p>
+                    <h4 style="margin-top:0; margin-bottom: 8px; font-size: 12px; color: #9a3412;">Recomendações do Profissional</h4>
+                    <p style="white-space: pre-wrap; margin:0; font-size: 11px; line-height: 1.5; color: #431407;">${data.recs}</p>
                 </div>
 
                 <div class="print-footer">
-                    <p class="prof-name">Luiz André</p>
-                    <p class="prof-title">Personal Trainer</p>
-                    <p class="prof-cref">CREF: 008094 - G/RN</p>
+                    <p style="font-weight: bold; margin: 0; font-size: 14px;">Luiz André</p>
+                    <p style="margin: 2px 0 0 0; color: #4b5563;">Personal Trainer</p>
+                    <p style="margin: 2px 0 0 0; font-size: 11px; font-weight: bold;">CREF: 008094 - G/RN</p>
                 </div>
             `;
 
             printArea.innerHTML = html;
             
-            // Timeout para garantir renderização do DOM antes de chamar print
             setTimeout(() => {
                 window.print();
             }, 300);
         }
 
-        // --- INICIAR APLICAÇÃO ---
+        // Iniciar
         init();
 
     </script>
