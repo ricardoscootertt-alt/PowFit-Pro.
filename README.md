@@ -213,12 +213,9 @@
                 
                 <!-- Card: Dados do Aluno -->
                 <div class="card rounded-xl p-5 shadow-sm">
-                    <div class="flex justify-between items-center mb-4 border-b border-opacity-20 pb-2" style="border-color: var(--border-color)">
-                        <h2 class="text-lg font-semibold flex items-center gap-2">
-                            <i class="fas fa-user text-primary"></i> Dados do Aluno
-                        </h2>
-                        <div id="imc-display"></div>
-                    </div>
+                    <h2 class="text-lg font-semibold mb-4 flex items-center gap-2 border-b border-opacity-20 pb-2" style="border-color: var(--border-color)">
+                        <i class="fas fa-user text-primary"></i> Dados do Aluno
+                    </h2>
                     
                     <div class="space-y-4">
                         <div>
@@ -239,6 +236,12 @@
                                 <input type="number" id="stu-height" step="0.01" oninput="calculateIMC()" class="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder="Ex: 1.75">
                             </div>
                         </div>
+                        
+                        <!-- Resultado do IMC Automático -->
+                        <div id="imc-display" class="hidden bg-black bg-opacity-10 border border-opacity-20 p-2 rounded-lg text-center text-sm font-medium transition-all" style="border-color: var(--border-color)">
+                            <!-- Injetado via JS -->
+                        </div>
+
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-sm font-medium mb-1">Gênero</label>
@@ -381,15 +384,15 @@
             "🔴 Obesidade": "Iniciar com exercícios de baixo impacto. Evolução gradual, priorizando saúde e segurança.",
             "⚖️ Baixo peso": "Foco em musculação para ganho de massa. Treinos moderados com alimentação adequada.",
             "🍬 Diabetes": "Treinos regulares moderados. Monitorar glicemia e evitar treinos em jejum.",
-            "❤️ Hipertensão": "Treinos moderados, evitar prender a respiração (Manobra de Valsalva). Priorizar controle da intensidade.",
-            "🔵 Hipotensão": "Evitar mudanças bruscas de postura. Manter hidratação e intensidade leve a moderada.",
+            "❤️ Hipertensão": "Treinos moderados, evitar prender a respiração. Priorizar controle da intensidade.",
+            "🔵 Hipotensão": "Evitar mudanças bruscas. Manter hidratação e intensidade leve a moderada.",
             "💔 Problemas cardíacos": "Treinos leves com liberação médica. Monitorar frequência cardíaca.",
             "🦴 Problemas articulares": "Evitar impacto. Priorizar exercícios controlados e máquinas.",
             "🫁 Problemas respiratórios": "Treinos leves a moderados com progressão gradual. Atenção à respiração.",
-            "⚠️ Lesões": "Adaptar exercícios. Evitar dor e focar na recuperação e fortalecimento específico.",
-            "🤰 Gestante": "Treinos leves a moderados, sem impacto ou risco de queda. Foco em mobilidade e bem-estar.",
-            "🤱 Lactante": "Treinar normalmente com extrema atenção à hidratação e ingestão calórica.",
-            "👴 Idoso": "Foco em força, equilíbrio e mobilidade. Intensidade moderada com segurança garantida."
+            "⚠️ Lesões": "Adaptar exercícios. Evitar dor e focar na recuperação.",
+            "🤰 Gestante": "Treinos leves a moderados, sem impacto ou risco. Foco em mobilidade e bem-estar.",
+            "🤱 Lactante": "Treinar normalmente com atenção à hidratação e energia.",
+            "👴 Idoso": "Foco em força, equilíbrio e mobilidade. Intensidade moderada com segurança."
         };
 
         const objectiveData = {
@@ -397,7 +400,7 @@
             "Hipertrofia": "Prioridade na progressão de carga e volume adequado. Essencial superávit calórico e descanso.",
             "Definição": "Manutenção de massa muscular enquanto reduz o percentual de gordura. Atenção estrita à dieta.",
             "Condicionamento": "Treinos com menor tempo de intervalo, circuitos e alta integração cardiopulmonar.",
-            "Resistência": "Séries mais longas (15+ reps), cadência controlada e aprimoramento da capacidade muscular.",
+            "Resistência": "Séries mais longas (15+ reps), cadência controlada e aprimnomearamento da capacidade muscular.",
             "Força": "Cargas altas, baixas repetições (1 a 5) e intervalos de descanso maiores (2 a 5 minutos).",
             "Reabilitação": "Treino focado em fortalecimento específico, mobilidade e controle motor. Respeitar limites de dor.",
             "Saúde geral": "Equilíbrio entre força, cardio e flexibilidade. O principal objetivo é a constância e bem-estar."
@@ -411,20 +414,21 @@
                 "Flexão de Braço", "Flexão com Pés Elevados", "Flexão Explosiva"
             ],
             "🦍 COSTAS": [
-                "Puxada Alta", "Puxada Frontal", "Puxada Unilateral", "Pulldown", 
-                "Remada Aberta", "Remada Baixa", "Remada Curvada", "Remada Unilateral", 
+                "Puxada Alta", "Puxada Unilateral", "Pulldown", "Remada Aberta", 
+                "Remada Baixa", "Remada Curvada", "Remada Curvada na Polia", "Remada Unilateral", 
                 "Remada Cavalinho (T-Bar)", "Remada no Cross", "Serrote", 
                 "Facepull (puxada de cima para baixo)", "Encolhimento (Trapézio)"
             ],
             "🦵 PERNAS": [
                 "Agachamento Livre", "Agachamento Taça", "Agachamento com Barra", 
                 "Agachamento no Smith", "Squat", "Hack Machine", "Leg 45°", "Leg 90°", 
-                "Agachamento Sumô", "Agachamento Sissy (Livre)", "Afundo", "Passada", 
-                "Avanço", "Búlgaro", "Step-up", "Levantamento Terra", "Levantamento Terra Romeno", 
-                "Terra Sumô", "Stiff", "Bom Dia", "Mesa Flexora", "Cadeira Flexora", 
-                "Elevação Pélvica", "Extensão de Quadril (Glúteo Máximo)", "Extensão Cruzada (Glúteo Médio)", 
-                "Abdução no Cross (Glúteo Médio + Mínimo)", "Coice", "Cachorrinho", "Caranguejo", 
-                "Cadeira Extensora", "Adução", "Abdução", "Cadeira Abdutora Inclinada", 
+                "Agachamento Sumô", "Agachamento Sissy (Livre)", "Afundo", "Recuo", 
+                "Avanço", "Passada", "Búlgaro", "Step-up", "Levantamento Terra", 
+                "Levantamento Terra Romeno", "Terra Sumô", "Stiff", "Bom Dia", 
+                "Mesa Flexora", "Cadeira Flexora", "Elevação Pélvica", 
+                "Extensão de Quadril (Glúteo Máximo)", "Extensão Cruzada (Glúteo Médio)", 
+                "Abdução no Cross (Glúteo Médio + Mínimo)", "Coice", "Cachorrinho", 
+                "Caranguejo", "Cadeira Extensora", "Adução", "Abdução", "Cadeira Abdutora Inclinada", 
                 "Flexão Nórdica", "Flexão Nórdica Invertida", "Panturrilha em Pé (Máquina)", 
                 "Panturrilha Livre", "Panturrilha no Leg Press", "Panturrilha Banco", 
                 "Panturrilha Squat", "Panturrilha Unilateral"
@@ -433,7 +437,7 @@
                 "(Bíceps) Rosca Direta", "(Bíceps) Rosca Alternada", "(Bíceps) Rosca 21", 
                 "(Bíceps) Rosca Scott Barra W", "(Bíceps) Rosca Scott Unilateral", 
                 "(Bíceps) Rosca Scott com Halteres", "(Bíceps) Rosca Martelo", "(Bíceps) Rosca Cross", 
-                "(Bíceps) Rosca Concentrada", "(Bíceps) Rosca Inversa", "(Bíceps) Rosca Banco Inclinado",
+                "(Bíceps) Rosca Concentrada", "(Bíceps) Rosca Inversa", "(Bíceps) Rosca 45°",
                 "(Tríceps) Pulley Unilateral", "(Tríceps) Pulley Barra", "(Tríceps) Pulley Corda", 
                 "(Tríceps) Pulley Pegada Inversa", "(Tríceps) Francês na Corda", "(Tríceps) Francês com Halter", 
                 "(Tríceps) Francês Unilateral", "(Tríceps) Cruzado Polia Dupla", "(Tríceps) Coice Unilateral", 
@@ -493,16 +497,19 @@
             if (w > 0 && h > 0) {
                 const imc = (w / (h * h)).toFixed(1);
                 let classif = "";
-                if (imc < 18.5) classif = "Abaixo do peso";
-                else if (imc < 24.9) classif = "Peso normal";
-                else if (imc < 29.9) classif = "Sobrepeso";
-                else if (imc < 34.9) classif = "Obesidade I";
-                else if (imc < 39.9) classif = "Obesidade II";
-                else classif = "Obesidade III";
+                let colorClass = "text-primary";
                 
-                display.innerHTML = `<span class="bg-primary bg-opacity-20 text-primary px-3 py-1 rounded-full text-xs font-bold border border-primary border-opacity-30">IMC: ${imc} (${classif})</span>`;
+                if (imc < 18.5) { classif = "Abaixo do peso"; colorClass = "text-yellow-500"; }
+                else if (imc < 24.9) { classif = "Peso normal"; colorClass = "text-green-500"; }
+                else if (imc < 29.9) { classif = "Sobrepeso"; colorClass = "text-yellow-600"; }
+                else if (imc < 34.9) { classif = "Obesidade I"; colorClass = "text-red-500"; }
+                else if (imc < 39.9) { classif = "Obesidade II"; colorClass = "text-red-600"; }
+                else { classif = "Obesidade III"; colorClass = "text-red-700"; }
+                
+                display.classList.remove('hidden');
+                display.innerHTML = `IMC Calculado: <span class="font-bold text-lg ${colorClass}">${imc}</span> - <span class="opacity-80">${classif}</span>`;
             } else {
-                display.innerHTML = '';
+                display.classList.add('hidden');
             }
         }
 
@@ -709,7 +716,6 @@
             container.innerHTML = `
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                     ${exercises.map(ex => {
-                        // Se for cardio, ajusta as reps iniciais para vazio
                         const isCardio = state.activeCategory === "🫀 CARDIO";
                         return `
                         <button onclick="addExerciseToWorkout('${ex}', ${isCardio})" class="card p-3 rounded-lg text-left text-xs sm:text-sm font-medium border hover:border-primary hover:text-primary transition flex justify-between items-center group">
@@ -798,7 +804,7 @@
             // Adicionar Recomendações Automáticas de Perfil
             if (objRecommendation || selectedHealthBoxes.length > 0) {
                 html += `<div class="print-guidelines">
-                            <h4>Diretrizes Baseadas no Perfil (Geração Automática)</h4>
+                            <h4>Diretrizes Baseadas no Perfil</h4>
                             <ul>`;
                 
                 if(objRecommendation) {
@@ -807,7 +813,7 @@
 
                 selectedHealthBoxes.forEach(healthKey => {
                     if(healthData[healthKey]) {
-                        // Tira o emoji para o texto da impressao ficar mais formal (opcional, mas recomendado)
+                        // Tira o emoji para o texto da impressao ficar mais formal
                         const cleanKey = healthKey.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{FE0F}]/gu, '').trim();
                         html += `<li><strong>Saúde (${cleanKey}):</strong> ${healthData[healthKey]}</li>`;
                     }
@@ -859,7 +865,7 @@
                 `;
             });
 
-            // Recomendações e Rodapé Obrigatório
+            // Recomendações Manuais
             if(data.recs.trim()) {
                 html += `
                     <div class="print-recommendations">
@@ -869,6 +875,7 @@
                 `;
             }
 
+            // Rodapé Obrigatório
             html += `
                 <div class="print-footer">
                     <p style="font-weight: bold; margin: 0; font-size: 14px;">Luiz André</p>
