@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Tema Padrão Masculino (Escuro Fitness) */
+            /* Tema Masculino (Escuro Fitness) */
             --bg-body: #0f172a;
             --bg-card: #1e293b;
             --text-main: #f8fafc;
@@ -21,7 +21,7 @@
         }
 
         [data-theme="Feminino"] {
-            /* Tema Feminino (Rosa Moderno Elegante) */
+            /* Tema Feminino (Rosa Moderno) */
             --bg-body: #fdf2f8;
             --bg-card: #ffffff;
             --text-main: #1e293b;
@@ -37,75 +37,137 @@
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-body);
             color: var(--text-main);
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: all 0.3s ease;
         }
 
-        .card { background-color: var(--bg-card); border: 1px solid var(--border-color); }
-        .input-field { background-color: var(--input-bg); border: 1px solid var(--input-border); color: var(--text-main); }
-        .input-field:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary); }
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+        }
+
+        .input-field {
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-main);
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 1px var(--primary);
+        }
+
         .btn-primary { background-color: var(--primary); color: white; transition: background-color 0.2s; }
         .btn-primary:hover { background-color: var(--primary-hover); }
         .text-primary { color: var(--primary); }
 
-        /* Oculta impressão na tela */
+        /* Impressão: Estilo Planilha Profissional */
         #print-area { display: none; }
 
-        /* Estilos A4 Lado a Lado (1 Página) */
         @media print {
             body { background: white !important; color: black !important; margin: 0; padding: 0; }
-            #app-container, #records-modal, #exercise-modal, .no-print { display: none !important; }
-            #print-area { display: block !important; padding: 10mm; font-family: 'Inter', sans-serif; font-size: 9px; box-sizing: border-box;}
-            @page { size: A4 landscape; margin: 0; } /* Paisagem ajuda a colocar mais dias lado a lado, mas pode ser mudado no navegador */
+            #app-container, #dashboard-view, .no-print { display: none !important; }
+            #print-area { display: block !important; padding: 10mm; font-family: 'Arial', sans-serif; font-size: 11px; }
+            @page { size: A4; margin: 0; }
             
-            .print-header { border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-end; }
-            .print-prof-title { font-size: 14px; font-weight: bold; margin: 0; text-transform: uppercase; color: #1f2937; }
-            .print-prof-subtitle { font-size: 10px; color: #4b5563; margin-top: 2px; }
+            /* Cabeçalho Profissional */
+            .print-header-box {
+                border: 2px solid #000;
+                padding: 10px;
+                margin-bottom: 15px;
+                background-color: #f3f4f6;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            .print-header-box h1 { margin: 0; font-size: 16px; text-transform: uppercase; text-align: center; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 5px;}
+            .print-header-box p { margin: 3px 0; font-size: 12px; font-weight: bold; text-align: center; }
             
-            .print-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 10px; background: #f9fafb; padding: 8px; border: 1px solid #e5e7eb; border-radius: 4px; }
-            .print-grid div { margin-bottom: 2px; }
+            /* Grid Aluno Planilha */
+            .print-student-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 15px;
+            }
+            .print-student-table th, .print-student-table td {
+                border: 1px solid #000;
+                padding: 5px 8px;
+                font-size: 11px;
+            }
+            .print-student-table th { background-color: #e5e7eb; font-weight: bold; width: 15%; -webkit-print-color-adjust: exact; }
 
-            .print-guidelines { border-left: 3px solid #3b82f6; background: #f0fdf4; padding: 6px; margin-bottom: 10px; font-size: 8.5px; }
-            .print-guidelines h4 { margin: 0 0 3px 0; font-size: 9px; }
-            .print-guidelines ul { margin: 0; padding-left: 15px; }
+            /* Recomendações Automáticas */
+            .print-guidelines { border: 1px solid #000; padding: 8px; margin-bottom: 15px; font-size: 10.5px; }
+            .print-guidelines h4 { margin: 0 0 5px 0; font-size: 11px; background: #e5e7eb; padding: 4px; border-bottom: 1px solid #000; -webkit-print-color-adjust: exact; }
+            .print-guidelines ul { margin: 5px 0 0 0; padding-left: 20px; }
 
-            /* Grid para dias lado a lado */
-            .print-workouts-container { display: flex; gap: 8px; align-items: flex-start; justify-content: space-between; width: 100%; margin-bottom: 10px;}
-            .print-workout { flex: 1; min-width: 0; page-break-inside: avoid; }
-            .print-workout h3 { background: #1f2937; color: white; padding: 4px; margin: 0 0 4px 0; font-size: 10px; text-align: center; border-radius: 2px;}
-            
-            table { width: 100%; border-collapse: collapse; }
-            th, td { border: 1px solid #d1d5db; padding: 3px; text-align: left; font-size: 8.5px; word-wrap: break-word; }
-            th { background-color: #f3f4f6; font-weight: 600; -webkit-print-color-adjust: exact; color-adjust: exact; }
-            
-            .print-recommendations { background: #fdf8f6; border: 1px solid #fed7aa; padding: 8px; border-radius: 4px; font-size: 8.5px; page-break-inside: avoid;}
+            /* Tabelas de Treino (Estilo Planilha Rigorosa) */
+            .print-workout { margin-bottom: 15px; page-break-inside: avoid; }
+            .print-workout h3 { 
+                background: #000; color: #fff; padding: 6px; margin: 0; font-size: 13px; text-transform: uppercase; text-align: center; border: 1px solid #000; -webkit-print-color-adjust: exact;
+            }
+            .workout-table { width: 100%; border-collapse: collapse; }
+            .workout-table th, .workout-table td {
+                border: 1px solid #000; padding: 6px 4px; text-align: center; font-size: 11px;
+            }
+            .workout-table th { background-color: #e5e7eb; -webkit-print-color-adjust: exact; }
+            .workout-table td:first-child { text-align: left; font-weight: bold; width: 40%; }
+            .workout-table td:last-child { text-align: left; width: 25%; font-style: italic; }
+
+            /* Footer Recomendações Manuais */
+            .print-manual-recs { border: 1px solid #000; padding: 8px; margin-top: 10px; page-break-inside: avoid;}
+            .print-manual-recs h4 { margin: 0 0 5px 0; font-size: 12px; border-bottom: 1px solid #000; padding-bottom: 3px; }
         }
 
+        /* Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
     </style>
 </head>
 <body data-theme="Masculino" class="min-h-screen pb-20">
 
-    <div id="app-container" class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-        
-        <!-- Header & Ações -->
-        <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+    <!-- BARRA DE NAVEGAÇÃO -->
+    <nav class="border-b border-opacity-20 mb-6 sticky top-0 z-40 backdrop-blur-md" style="background-color: var(--bg-card); border-color: var(--border-color)">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-3">
                 <i class="fas fa-dumbbell text-3xl text-primary"></i>
                 <div>
-                    <h1 class="text-2xl font-bold tracking-tight">PowFit Pro</h1>
-                    <p class="text-xs var(--text-muted)">Plataforma Profissional</p>
+                    <h1 class="text-xl font-bold tracking-tight">PowFit Pro</h1>
+                    <p class="text-[10px] uppercase tracking-wider opacity-60">Plataforma Profissional</p>
                 </div>
             </div>
-            <div class="flex gap-3 w-full sm:w-auto">
-                <button onclick="openRecords()" class="flex-1 sm:flex-none bg-gray-700 hover:bg-gray-600 text-white px-4 py-2.5 rounded-lg font-medium shadow-md flex items-center justify-center gap-2 transition">
-                    <i class="fas fa-folder-open"></i> Fichas Salvas
+            <div class="flex gap-2">
+                <button onclick="toggleView('dashboard')" id="btn-nav-dashboard" class="px-4 py-2 rounded-lg text-sm font-medium transition hover:bg-black hover:bg-opacity-10 border border-transparent">
+                    <i class="fas fa-folder-open mr-2"></i> Fichas Salvas
                 </button>
-                <button onclick="generatePrint()" class="flex-1 sm:flex-none btn-primary px-6 py-2.5 rounded-lg font-medium shadow-lg flex items-center justify-center gap-2">
-                    <i class="fas fa-print"></i> Salvar e Imprimir
+                <button onclick="toggleView('editor')" id="btn-nav-editor" class="px-4 py-2 rounded-lg text-sm font-medium transition bg-primary text-white shadow-md">
+                    <i class="fas fa-edit mr-2"></i> Nova Ficha
                 </button>
             </div>
+        </div>
+    </nav>
+
+    <!-- PAINEL: FICHAS SALVAS (MEMÓRIA) -->
+    <div id="dashboard-view" class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 hidden">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold"><i class="fas fa-database text-primary mr-2"></i> Fichas de Treino Salvas</h2>
+        </div>
+        
+        <div id="saved-sheets-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Renderizado via JS -->
+        </div>
+    </div>
+
+
+    <!-- PAINEL: EDITOR DE FICHA -->
+    <div id="editor-view" class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- Cabeçalho Ações -->
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold" id="editor-title">Criando Nova Ficha</h2>
+            <button onclick="generatePrint()" class="btn-primary px-6 py-2.5 rounded-lg font-medium shadow-lg flex items-center gap-2">
+                <i class="fas fa-print"></i> Salvar e Imprimir
+            </button>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -113,65 +175,60 @@
             <!-- COLUNA ESQUERDA -->
             <div class="lg:col-span-4 space-y-6">
                 
-                <!-- Cadastro do Profissional -->
-                <div class="card rounded-xl p-5 shadow-sm border-l-4 border-l-primary">
-                    <h2 class="text-sm font-semibold mb-3 flex items-center gap-2 opacity-80">
-                        <i class="fas fa-id-badge text-primary"></i> Dados do Profissional (Cabeçalho)
+                <!-- Card: Dados do Profissional -->
+                <div class="card rounded-xl p-5 shadow-sm border-l-4" style="border-left-color: var(--primary)">
+                    <h2 class="text-md font-semibold mb-3 flex items-center gap-2">
+                        <i class="fas fa-id-badge text-primary"></i> Dados do Personal Trainer
                     </h2>
                     <div class="space-y-3">
                         <div>
-                            <input type="text" id="prof-name" class="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder="Nome do Personal Trainer">
+                            <input type="text" id="prof-name" onchange="saveProfData()" class="input-field w-full rounded px-3 py-2 text-sm" placeholder="Nome do Personal">
                         </div>
                         <div class="grid grid-cols-2 gap-3">
-                            <input type="text" id="prof-cref" class="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder="CREF (Ex: 008094 - G)">
-                            <select id="prof-state" class="input-field w-full rounded-lg px-3 py-2 text-sm">
-                                <option value="">Estado (UF)</option>
-                                <option value="AC">AC</option><option value="AL">AL</option><option value="AP">AP</option><option value="AM">AM</option><option value="BA">BA</option><option value="CE">CE</option><option value="DF">DF</option><option value="ES">ES</option><option value="GO">GO</option><option value="MA">MA</option><option value="MT">MT</option><option value="MS">MS</option><option value="MG">MG</option><option value="PA">PA</option><option value="PB">PB</option><option value="PR">PR</option><option value="PE">PE</option><option value="PI">PI</option><option value="RJ">RJ</option><option value="RN">RN</option><option value="RS">RS</option><option value="RO">RO</option><option value="RR">RR</option><option value="SC">SC</option><option value="SP">SP</option><option value="SE">SE</option><option value="TO">TO</option>
-                            </select>
+                            <input type="text" id="prof-cref" onchange="saveProfData()" class="input-field w-full rounded px-3 py-2 text-sm" placeholder="CREF (Ex: 008094)">
+                            <input type="text" id="prof-state" onchange="saveProfData()" class="input-field w-full rounded px-3 py-2 text-sm" placeholder="Estado (Ex: G/RN)">
                         </div>
                     </div>
                 </div>
 
-                <!-- Cadastro do Aluno -->
+                <!-- Card: Dados do Aluno -->
                 <div class="card rounded-xl p-5 shadow-sm">
                     <div class="flex justify-between items-center mb-4 border-b border-opacity-20 pb-2" style="border-color: var(--border-color)">
-                        <h2 class="text-lg font-semibold flex items-center gap-2">
+                        <h2 class="text-md font-semibold flex items-center gap-2">
                             <i class="fas fa-user text-primary"></i> Dados do Aluno
                         </h2>
                         <div id="imc-display"></div>
                     </div>
                     
-                    <div class="space-y-3">
-                        <input type="hidden" id="record-id">
+                    <div class="space-y-4">
                         <div>
-                            <label class="block text-xs font-medium mb-1 opacity-70">Nome Completo</label>
-                            <input type="text" id="stu-name" class="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder="Nome do aluno">
+                            <input type="text" id="stu-name" class="input-field w-full rounded px-3 py-2 text-sm font-bold" placeholder="Nome Completo do Aluno">
                         </div>
-                        <div class="grid grid-cols-3 gap-2">
+                        <div class="grid grid-cols-3 gap-3">
                             <div>
-                                <label class="block text-xs font-medium mb-1 opacity-70">Idade</label>
-                                <input type="number" id="stu-age" class="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder="Ex: 25">
+                                <label class="block text-[10px] uppercase opacity-70 mb-1">Idade</label>
+                                <input type="number" id="stu-age" class="input-field w-full rounded px-2 py-2 text-sm text-center">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium mb-1 opacity-70">Peso (kg)</label>
-                                <input type="number" id="stu-weight" oninput="calculateIMC()" class="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder="Ex: 75">
+                                <label class="block text-[10px] uppercase opacity-70 mb-1">Peso (kg)</label>
+                                <input type="number" id="stu-weight" oninput="calculateIMC()" class="input-field w-full rounded px-2 py-2 text-sm text-center">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium mb-1 opacity-70">Altura (m)</label>
-                                <input type="number" id="stu-height" step="0.01" oninput="calculateIMC()" class="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder="Ex: 1.75">
+                                <label class="block text-[10px] uppercase opacity-70 mb-1">Altura (m)</label>
+                                <input type="number" id="stu-height" step="0.01" oninput="calculateIMC()" class="input-field w-full rounded px-2 py-2 text-sm text-center">
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-2">
+                        <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-xs font-medium mb-1 opacity-70">Gênero</label>
-                                <select id="stu-gender" onchange="changeTheme()" class="input-field w-full rounded-lg px-3 py-2 text-sm">
+                                <label class="block text-[10px] uppercase opacity-70 mb-1">Gênero</label>
+                                <select id="stu-gender" onchange="changeTheme()" class="input-field w-full rounded px-2 py-2 text-sm">
                                     <option value="Masculino">Masculino</option>
                                     <option value="Feminino">Feminino</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs font-medium mb-1 opacity-70">Nível</label>
-                                <select id="stu-level" class="input-field w-full rounded-lg px-3 py-2 text-sm">
+                                <label class="block text-[10px] uppercase opacity-70 mb-1">Nível</label>
+                                <select id="stu-level" class="input-field w-full rounded px-2 py-2 text-sm">
                                     <option>Iniciante</option>
                                     <option>Intermediário</option>
                                     <option>Avançado</option>
@@ -179,8 +236,8 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium mb-1 opacity-70">Objetivo (Gera recomendação)</label>
-                            <select id="stu-objective" class="input-field w-full rounded-lg px-3 py-2 text-sm">
+                            <label class="block text-[10px] uppercase opacity-70 mb-1">Objetivo Primário</label>
+                            <select id="stu-objective" class="input-field w-full rounded px-3 py-2 text-sm font-medium text-primary">
                                 <option value="Emagrecimento">Emagrecimento</option>
                                 <option value="Hipertrofia">Hipertrofia</option>
                                 <option value="Definição">Definição</option>
@@ -191,368 +248,198 @@
                                 <option value="Saúde geral">Saúde geral</option>
                             </select>
                         </div>
-                        <div>
-                            <label class="block text-xs font-medium mb-1 opacity-70">Frequência Semanal</label>
-                            <select id="stu-freq" class="input-field w-full rounded-lg px-3 py-2 text-sm">
-                                <option>3 dias</option>
-                                <option>5 dias</option>
-                                <option>6 dias</option>
-                                <option>Personalizado</option>
-                            </select>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[10px] uppercase opacity-70 mb-1">Frequência</label>
+                                <select id="stu-freq" class="input-field w-full rounded px-2 py-2 text-sm">
+                                    <option>3 dias</option>
+                                    <option>5 dias</option>
+                                    <option>6 dias</option>
+                                    <option>Personalizado</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] uppercase opacity-70 mb-1">Validade</label>
+                                <select id="stu-validity" class="input-field w-full rounded px-2 py-2 text-sm">
+                                    <option>15 dias</option>
+                                    <option selected>30 dias</option>
+                                    <option>60 dias</option>
+                                    <option>90 dias</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Estado de Saúde -->
+                <!-- Card: Estado de Saúde -->
                 <div class="card rounded-xl p-5 shadow-sm">
-                    <h2 class="text-lg font-semibold mb-3 flex items-center gap-2 border-b border-opacity-20 pb-2" style="border-color: var(--border-color)">
-                        <i class="fas fa-notes-medical text-primary"></i> Estado de Saúde
+                    <h2 class="text-md font-semibold mb-2 flex items-center gap-2 border-b border-opacity-20 pb-2" style="border-color: var(--border-color)">
+                        <i class="fas fa-heartbeat text-primary"></i> Estado de Saúde
                     </h2>
-                    <div class="grid grid-cols-1 gap-1.5 text-xs h-48 overflow-y-auto pr-2" id="health-container">
+                    <div class="grid grid-cols-1 gap-1 text-xs" id="health-container">
                         <!-- Gerado via JS -->
                     </div>
                 </div>
 
-                <!-- Recomendações Extras -->
-                <div class="card rounded-xl p-5 shadow-sm">
-                    <h2 class="text-lg font-semibold mb-3 flex items-center gap-2 border-b border-opacity-20 pb-2" style="border-color: var(--border-color)">
-                        <i class="fas fa-pen text-primary"></i> Recomendações Manuais
-                    </h2>
-                    <div class="space-y-3">
-                        <div>
-                            <select id="stu-validity" class="input-field w-full rounded-lg px-3 py-2 text-sm">
-                                <option>15 dias</option>
-                                <option selected>30 dias</option>
-                                <option>60 dias</option>
-                                <option>90 dias</option>
-                            </select>
-                        </div>
-                        <div>
-                            <textarea id="stu-recs" rows="3" class="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder="Escreva observações livres (Hidratação, descanso, etc)..."></textarea>
-                        </div>
-                    </div>
-                </div>
             </div>
 
-            <!-- COLUNA DIREITA: Treinos -->
-            <div class="lg:col-span-8 space-y-4">
+            <!-- COLUNA DIREITA: Montagem dos Treinos -->
+            <div class="lg:col-span-8 space-y-6">
                 
-                <div class="flex justify-between items-center bg-opacity-10 p-4 rounded-xl card border-dashed border-2">
+                <div class="flex flex-col sm:flex-row justify-between items-center bg-opacity-10 p-4 rounded-xl card border-dashed border-2 gap-4">
                     <div>
                         <h2 class="text-lg font-bold flex items-center gap-2">
-                            <i class="fas fa-clipboard-list text-primary"></i> Montagem da Ficha
+                            <i class="fas fa-clipboard-list text-primary"></i> Rotina de Treinos
                         </h2>
+                        <p class="text-xs opacity-70 mt-1">Montagem 100% manual. Adicione os dias da semana.</p>
                     </div>
-                    <button onclick="addWorkout()" class="btn-primary px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
-                        <i class="fas fa-plus"></i> Adicionar Dia de Treino
+                    <button onclick="addWorkout()" class="btn-primary px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 w-full sm:w-auto justify-center">
+                        <i class="fas fa-plus"></i> Novo Dia / Treino
                     </button>
                 </div>
 
-                <div id="workouts-container" class="space-y-4">
+                <div id="workouts-container" class="space-y-6">
                     <!-- Treinos gerados via JS -->
                 </div>
+                
+                <!-- Recomendações Finais Livres -->
+                <div class="card rounded-xl p-5 shadow-sm mt-6">
+                    <h2 class="text-md font-semibold mb-3 flex items-center gap-2">
+                        <i class="fas fa-comment-dots text-primary"></i> Recomendações do Profissional (Texto Livre)
+                    </h2>
+                    <textarea id="stu-recs" rows="3" class="input-field w-full rounded-lg px-3 py-2 text-sm" placeholder="Ex: Cuidado com a hidratação, descanse 1 min entre aparelhos..."></textarea>
+                </div>
+
             </div>
         </div>
     </div>
 
     <!-- MODAL DE EXERCÍCIOS -->
     <div id="exercise-modal" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-        <div class="card w-full max-w-5xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
+        <div class="card w-full max-w-5xl rounded-2xl shadow-2xl flex flex-col h-[85vh]">
             <div class="p-4 border-b flex justify-between items-center" style="border-color: var(--border-color)">
-                <h3 class="text-lg font-bold"><i class="fas fa-search text-primary mr-2"></i> Adicionar Exercício</h3>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition-colors"><i class="fas fa-times text-xl"></i></button>
+                <h3 class="text-lg font-bold"><i class="fas fa-search text-primary mr-2"></i> Banco de Exercícios</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
             </div>
+            
             <div class="flex flex-col md:flex-row flex-1 overflow-hidden">
-                <div class="w-full md:w-1/4 border-r overflow-y-auto p-3 space-y-1" style="border-color: var(--border-color)" id="modal-categories"></div>
+                <div class="w-full md:w-1/4 border-r overflow-y-auto p-2 space-y-1" style="border-color: var(--border-color)" id="modal-categories"></div>
                 <div class="w-full md:w-3/4 overflow-y-auto p-4 bg-black bg-opacity-5" id="modal-exercises"></div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL FICHAS SALVAS (MEMÓRIA) -->
-    <div id="records-modal" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-        <div class="card w-full max-w-3xl rounded-2xl shadow-2xl flex flex-col max-h-[80vh]">
-            <div class="p-5 border-b flex justify-between items-center" style="border-color: var(--border-color)">
-                <h3 class="text-xl font-bold"><i class="fas fa-folder-open text-primary mr-2"></i> Fichas Salvas na Memória</h3>
-                <button onclick="closeRecords()" class="text-gray-400 hover:text-red-500 transition-colors"><i class="fas fa-times text-2xl"></i></button>
-            </div>
-            <div class="p-5 overflow-y-auto flex-1 space-y-3" id="records-container">
-                <!-- Preenchido via JS -->
-            </div>
-        </div>
-    </div>
-
-    <!-- ÁREA DE IMPRESSÃO -->
+    <!-- ÁREA DE IMPRESSÃO PLANILHA -->
     <div id="print-area"></div>
 
     <script>
-        // --- BANCO DE DADOS ---
+        // --- BASE DE DADOS (Atualizada c/ Solicitações) ---
         const healthData = {
-            "🟢 Saudável": "Manter treinos regulares 3–5x por semana, combinando musculação e cardio.",
-            "⚪ Sedentário": "Iniciar com treinos leves 2–3x por semana. Priorizar adaptação.",
-            "🟡 Sobrepeso": "Treinar 3–5x por semana com foco em gasto calórico.",
-            "🔴 Obesidade": "Iniciar com exercícios de baixo impacto. Evolução gradual.",
-            "⚖️ Baixo peso": "Foco em musculação para ganho de massa. Alimentação adequada.",
-            "🍬 Diabetes": "Monitorar glicemia e evitar treinos em jejum.",
-            "❤️ Hipertensão": "Treinos moderados, evitar prender a respiração.",
-            "🔵 Hipotensão": "Evitar mudanças bruscas. Manter hidratação.",
-            "💔 Problemas cardíacos": "Treinos leves com liberação médica. Monitorar frequência.",
-            "🦴 Problemas articulares": "Evitar impacto. Priorizar máquinas e controle.",
-            "🫁 Problemas respiratórios": "Progressão gradual. Atenção à respiração.",
-            "⚠️ Lesões": "Adaptar exercícios. Focar na recuperação.",
-            "🤰 Gestante": "Treinos leves sem impacto. Foco em mobilidade.",
-            "🤱 Lactante": "Treinar com atenção à hidratação e energia.",
-            "👴 Idoso": "Foco em força, equilíbrio e mobilidade com segurança."
+            "🟢 Saudável": "Manter treinos regulares 3–5x por semana, combinando musculação e cardio. Foco em evolução e constância.",
+            "⚪ Sedentário": "Iniciar com treinos leves 2–3x por semana. Priorizar adaptação, técnica e evitar excesso de carga.",
+            "🟡 Sobrepeso": "Treinar 3–5x por semana com foco em gasto calórico. Combinar musculação e cardio moderado.",
+            "🔴 Obesidade": "Iniciar com exercícios de baixo impacto. Evolução gradual, priorizando saúde e segurança.",
+            "⚖️ Baixo peso": "Foco em musculação para ganho de massa. Treinos moderados com alimentação adequada.",
+            "🍬 Diabetes": "Treinos regulares moderados. Monitorar glicemia e evitar treinos em jejum.",
+            "❤️ Hipertensão": "Treinos moderados, evitar prender a respiração. Priorizar controle da intensidade.",
+            "🔵 Hipotensão": "Evitar mudanças bruscas de postura. Manter hidratação e intensidade leve a moderada.",
+            "💔 Problemas cardíacos": "Treinos leves com liberação médica. Monitorar frequência cardíaca.",
+            "🦴 Problemas articulares": "Evitar impacto. Priorizar exercícios controlados e máquinas.",
+            "🫁 Problemas respiratórios": "Treinos leves a moderados com progressão gradual. Atenção à respiração.",
+            "⚠️ Lesões": "Adaptar exercícios. Evitar dor e focar na recuperação.",
+            "🤰 Gestante": "Treinos leves a moderados, sem impacto ou risco. Foco em mobilidade e bem-estar.",
+            "🤱 Lactante": "Treinar normalmente com atenção à hidratação e energia.",
+            "👴 Idoso": "Foco em força, equilíbrio e mobilidade. Intensidade moderada com segurança."
         };
 
         const objectiveData = {
-            "Emagrecimento": "Foco em déficit calórico com treinos mistos (força + aeróbicos).",
-            "Hipertrofia": "Prioridade na progressão de carga, volume e superávit calórico.",
-            "Definição": "Manutenção muscular com redução de percentual de gordura.",
-            "Condicionamento": "Treinos com menor tempo de intervalo e circuitos.",
-            "Resistência": "Séries mais longas e aprimoramento da capacidade muscular.",
-            "Força": "Cargas altas, baixas repetições e intervalos de descanso maiores.",
-            "Reabilitação": "Fortalecimento específico, mobilidade e respeito à dor.",
-            "Saúde geral": "Equilíbrio entre força, cardio e flexibilidade constante."
+            "Emagrecimento": "Foco em déficit calórico com treinos mistos de força e aeróbicos.",
+            "Hipertrofia": "Prioridade na progressão de carga e volume adequado. Superávit calórico necessário.",
+            "Definição": "Manutenção de massa muscular reduzindo % de gordura. Foco na dieta.",
+            "Condicionamento": "Treinos com menor intervalo, circuitos e alta integração cardiopulmonar.",
+            "Resistência": "Séries longas (15+ reps), cadência controlada.",
+            "Força": "Cargas altas, baixas repetições (1-5) e intervalos maiores.",
+            "Reabilitação": "Fortalecimento específico e mobilidade. Respeitar limites de dor.",
+            "Saúde geral": "Equilíbrio entre força, cardio e flexibilidade."
         };
 
         const dbCategories = {
-            "🔥 PEITO": [
-                "Supino Reto", "Supino Inclinado", "Supino com Halteres", "Cross Over", 
-                "Cross Over Alto", "Cross Over Baixo", "Crucifixo Reto", "Crucifixo Inclinado", 
-                "Crucifixo na Máquina", "Peck Fly", "Peck Fly Unilateral", "Pullover", 
-                "Flexão de Braço", "Flexão com Pés Elevados", "Flexão Explosiva"
-            ],
-            "🦍 COSTAS": [
-                "Puxada Alta", "Puxada Unilateral", "Pulldown", "Remada Aberta", 
-                "Remada Baixa", "Remada Curvada", "Remada Curvada na Polia", "Remada Unilateral", 
-                "Remada Cavalinho (T-Bar)", "Remada no Cross", "Serrote", 
-                "Facepull (puxada de cima para baixo)", "Encolhimento (Trapézio)"
-            ],
-            "🦵 PERNAS": [
-                "Agachamento Livre", "Agachamento Taça", "Agachamento com Barra", 
-                "Agachamento no Smith", "Squat", "Hack Machine", "Leg 45°", "Leg 90°", 
-                "Agachamento Sumô", "Agachamento Sissy (Livre)", "Afundo", "Recuo", "Avanço", 
-                "Passada", "Búlgaro", "Step-up", "Levantamento Terra", "Levantamento Terra Romeno", 
-                "Terra Sumô", "Stiff", "Bom Dia", "Mesa Flexora", "Cadeira Flexora", 
-                "Elevação Pélvica", "Extensão de Quadril", "Extensão Cruzada (Médio)", 
-                "Abdução no Cross", "Coice", "Cachorrinho", "Caranguejo", 
-                "Cadeira Extensora", "Adução", "Abdução", "Cadeira Abdutora Inclinada", 
-                "Flexão Nórdica", "Flexão Nórdica Invertida", "Panturrilha em Pé (Máquina)", 
-                "Panturrilha Livre", "Panturrilha no Leg Press", "Panturrilha Banco", 
-                "Panturrilha Squat", "Panturrilha Unilateral"
-            ],
-            "💪 BRAÇOS": [
-                "(Bíceps) Rosca Direta", "(Bíceps) Rosca Alternada", "(Bíceps) Rosca 21", 
-                "(Bíceps) Rosca Scott Barra W", "(Bíceps) Rosca Scott Unilateral", 
-                "(Bíceps) Rosca Scott Halteres", "(Bíceps) Rosca Martelo", "(Bíceps) Rosca Cross", 
-                "(Bíceps) Rosca Concentrada", "(Bíceps) Rosca Inversa", "(Bíceps) Rosca 45°",
-                "(Tríceps) Pulley Unilateral", "(Tríceps) Pulley Barra", "(Tríceps) Pulley Corda", 
-                "(Tríceps) Pulley Pegada Inversa", "(Tríceps) Francês Corda", "(Tríceps) Francês Halter", 
-                "(Tríceps) Francês Unilateral", "(Tríceps) Cruzado Polia Dupla", "(Tríceps) Coice", 
-                "(Tríceps) Arremesso", "(Tríceps) Testa", "(Tríceps) Mergulho Banco"
-            ],
-            "🪨 OMBROS": [
-                "Elevação Frontal", "Elevação Frontal no Cross", "Elevação Lateral", 
-                "Elevação Lateral na Polia", "Elevação Lateral Sentado", "Desenvolvimento Halteres", 
-                "Desenvolvimento com Barra", "Arnold Press", "Elevação Borboleta", 
-                "Crucifixo Inverso Sentado", "Crucifixo Inverso Polia", 
-                "Crucifixo Inverso Unilateral", "Facepull (puxada reta)", "Remada Alta"
-            ],
-            "🧠 ABDÔMEN": [
-                "Infra com Elevação", "Abdominal Supra", "Abdominal Remador", 
-                "Abdominal Bicicleta", "Abdominal Twister", "Prancha", 
-                "Prancha Lateral", "Trituração de Cabos", "Isometria na parede", "Abd isometrico"
-            ],
-            "🫀 CARDIO": [
-                "Bicicleta - 10 Min", "Bicicleta - 15 Min", "Bicicleta - 20 Min",
-                "Esteira - 10 Min", "Esteira - 15 Min", "Esteira - 20 Min",
-                "Pular Corda - 10 Min", "Pular Corda - 15 Min", "Pular Corda - 20 Min"
-            ]
+            "🔥 PEITO": ["Supino Reto", "Supino Inclinado", "Supino com Halteres", "Cross Over", "Cross Over Alto", "Cross Over Baixo", "Crucifixo Reto", "Crucifixo Inclinado", "Crucifixo na Máquina", "Peck Fly", "Peck Fly Unilateral", "Pullover", "Flexão de Braço", "Flexão com Pés Elevados", "Flexão Explosiva"],
+            "🦍 COSTAS": ["Puxada Alta", "Puxada Unilateral", "Pulldown", "Remada Aberta", "Remada Baixa", "Remada Curvada", "Remada Curvada na Polia", "Remada Unilateral", "Remada Cavalinho (T-Bar)", "Remada no Cross", "Serrote", "Facepull (puxada de cima para baixo)", "Encolhimento (Trapézio)"],
+            "🦵 PERNAS": ["Agachamento Livre", "Agachamento Taça", "Agachamento com Barra", "Agachamento no Smith", "Squat", "Hack Machine", "Leg 45°", "Leg 90°", "Agachamento Sumô", "Agachamento Sissy (Livre)", "Afundo", "Recuo", "Avanço", "Passada", "Búlgaro", "Step-up", "Levantamento Terra", "Levantamento Terra Romeno", "Terra Sumô", "Stiff", "Bom Dia", "Mesa Flexora", "Cadeira Flexora", "Elevação Pélvica", "Extensão de Quadril (Glúteo Máximo)", "Extensão Cruzada (Glúteo Médio)", "Abdução no Cross (Glúteo Médio + Mínimo)", "Coice", "Cachorrinho", "Caranguejo", "Cadeira Extensora", "Adução", "Abdução", "Cadeira Abdutora Inclinada", "Flexão Nórdica", "Flexão Nórdica Invertida", "Panturrilha em Pé (Máquina)", "Panturrilha Livre", "Panturrilha no Leg Press", "Panturrilha Banco", "Panturrilha Squat", "Panturrilha Unilateral"],
+            "💪 BRAÇOS": ["(Bíceps) Rosca Direta", "(Bíceps) Rosca Alternada", "(Bíceps) Rosca 21", "(Bíceps) Rosca Scott Barra W", "(Bíceps) Rosca Scott Unilateral", "(Bíceps) Rosca Scott com Halteres", "(Bíceps) Rosca Martelo", "(Bíceps) Rosca Cross", "(Bíceps) Rosca Concentrada", "(Bíceps) Rosca Inversa", "(Bíceps) Rosca 45°", "(Tríceps) Pulley Unilateral", "(Tríceps) Pulley Barra", "(Tríceps) Pulley Corda", "(Tríceps) Pulley Pegada Inversa", "(Tríceps) Francês na Corda", "(Tríceps) Francês com Halter", "(Tríceps) Francês Unilateral", "(Tríceps) Cruzado Polia Dupla", "(Tríceps) Coice Unilateral", "(Tríceps) Arremesso", "(Tríceps) Testa", "(Tríceps) Mergulho no Banco"],
+            "🪨 OMBROS": ["Elevação Frontal", "Elevação Frontal no Cross", "Elevação Lateral", "Elevação Lateral na Polia", "Elevação Lateral Sentado", "Desenvolvimento com Halteres", "Desenvolvimento com Barra", "Arnold Press", "Elevação Borboleta", "Crucifixo Inverso Sentado com Halteres", "Crucifixo Inverso na Polia", "Crucifixo Inverso Unilateral na Polia", "Facepull (puxada reta)", "Remada Alta"],
+            "🧠 ABDÔMEN": ["Infra com Elevação de Perna", "Abdominal Supra", "Abdominal Remador", "Abdominal Bicicleta", "Abdominal Twister com Peso", "Prancha", "Prancha Lateral", "Trituração de Cabos em Pé", "Isometria na parede", "Abdominal isometrico"],
+            "🫀 CARDIO": ["Bicicleta - 10 Minutos", "Bicicleta - 15 Minutos", "Bicicleta - 20 Minutos", "Esteira - 10 Minutos", "Esteira - 15 Minutos", "Esteira - 20 Minutos", "Pular Corda - 10 Minutos", "Pular Corda - 15 Minutos", "Pular Corda - 20 Minutos"]
         };
 
-        const dbTechniques = [
-            "Normal", "Drop set", "Bi-set", "Tri-set", "Série gigante", 
-            "Rest-pause", "FST-7", "Pré-exaust", "Pós-exaust", 
-            "Negativa", "Isometria", "Parciais", "Pirâmide"
-        ];
+        const dbTechniques = ["-", "Drop set", "Bi-set", "Tri-set", "Série gigante", "Rest-pause", "FST-7", "Pré-exaustão", "Pós-exaustão", "Negativa", "Isometria", "Parciais", "Pirâmide"];
+        const defaultDays = ["Treino Segunda", "Treino Terça", "Treino Quarta", "Treino Quinta", "Treino Sexta", "Treino Sábado"];
 
-        const daysOfWeek = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
-
-        // --- ESTADO ---
+        // --- ESTADO DA APLICAÇÃO ---
+        let currentSheetId = generateId();
         let state = {
             workouts: [ { id: generateId(), title: "Treino Segunda", exercises: [] } ],
             activeModalWorkoutId: null,
             activeCategory: "🔥 PEITO"
         };
 
-        // --- INICIALIZAÇÃO E UI ---
+        // --- INICIALIZAÇÃO E MEMÓRIA ---
         function init() {
             renderHealthOptions();
-            renderWorkouts();
-            loadProfData(); // Carrega dados do prof q ficam salvos no navegador
-        }
-
-        function changeTheme() {
-            const gender = document.getElementById('stu-gender').value;
-            document.body.setAttribute('data-theme', gender);
-        }
-
-        function calculateIMC() {
-            const w = parseFloat(document.getElementById('stu-weight').value);
-            const h = parseFloat(document.getElementById('stu-height').value);
-            const display = document.getElementById('imc-display');
-            if (w > 0 && h > 0) {
-                const imc = (w / (h * h)).toFixed(1);
-                let classif = imc < 18.5 ? "Abaixo" : imc < 24.9 ? "Normal" : imc < 29.9 ? "Sobrepeso" : "Obesidade";
-                display.innerHTML = `<span class="bg-primary bg-opacity-20 text-primary px-2 py-1 rounded text-xs font-bold border border-primary border-opacity-30">IMC: ${imc} (${classif})</span>`;
-            } else { display.innerHTML = ''; }
+            loadProfData();
+            toggleView('editor');
+            renderSavedSheets();
         }
 
         function generateId() { return Math.random().toString(36).substr(2, 9); }
 
-        function renderHealthOptions() {
-            const container = document.getElementById('health-container');
-            container.innerHTML = Object.keys(healthData).map(opt => `
-                <label class="flex items-start space-x-2 cursor-pointer p-1.5 rounded hover:bg-black hover:bg-opacity-5 transition border border-transparent">
-                    <input type="checkbox" value="${opt}" class="health-cb mt-0.5 rounded border-gray-400 text-primary focus:ring-primary w-3.5 h-3.5">
-                    <span class="font-medium truncate">${opt}</span>
-                </label>
-            `).join('');
-        }
+        function toggleView(view) {
+            document.getElementById('dashboard-view').classList.add('hidden');
+            document.getElementById('editor-view').classList.add('hidden');
+            document.getElementById('btn-nav-dashboard').classList.remove('bg-primary', 'text-white', 'shadow-md');
+            document.getElementById('btn-nav-editor').classList.remove('bg-primary', 'text-white', 'shadow-md');
 
-        // --- TREINOS ---
-        function getNextDay() {
-            const count = state.workouts.length;
-            return `Treino ${daysOfWeek[count % 7]}`;
-        }
-
-        function addWorkout() {
-            state.workouts.push({ id: generateId(), title: getNextDay(), exercises: [] });
-            renderWorkouts();
-        }
-
-        function removeWorkout(id) {
-            if(confirm("Remover este dia de treino?")) {
-                state.workouts = state.workouts.filter(w => w.id !== id);
+            if(view === 'dashboard') {
+                document.getElementById('dashboard-view').classList.remove('hidden');
+                document.getElementById('btn-nav-dashboard').classList.add('bg-primary', 'text-white', 'shadow-md');
+                renderSavedSheets();
+            } else {
+                document.getElementById('editor-view').classList.remove('hidden');
+                document.getElementById('btn-nav-editor').classList.add('bg-primary', 'text-white', 'shadow-md');
                 renderWorkouts();
             }
         }
 
-        function updateWorkoutTitle(id, newTitle) {
-            const w = state.workouts.find(w => w.id === id);
-            if(w) w.title = newTitle;
-        }
-
-        // --- EXERCÍCIOS ---
-        function removeExercise(wId, exIndex) {
-            state.workouts.find(w => w.id === wId).exercises.splice(exIndex, 1);
-            renderWorkouts();
-        }
-        function moveExercise(wId, exIndex, dir) {
-            const w = state.workouts.find(w => w.id === wId);
-            if (dir === 'up' && exIndex > 0) {
-                [w.exercises[exIndex], w.exercises[exIndex-1]] = [w.exercises[exIndex-1], w.exercises[exIndex]];
-            } else if (dir === 'down' && exIndex < w.exercises.length - 1) {
-                [w.exercises[exIndex], w.exercises[exIndex+1]] = [w.exercises[exIndex+1], w.exercises[exIndex]];
-            }
-            renderWorkouts();
-        }
-        function updateExercise(wId, exIndex, field, val) {
-            state.workouts.find(w => w.id === wId).exercises[exIndex][field] = val;
-        }
-
-        function renderWorkouts() {
-            const container = document.getElementById('workouts-container');
-            container.innerHTML = '';
-            state.workouts.forEach(workout => {
-                let exercisesHtml = workout.exercises.length === 0 ? `<div class="text-center p-4 text-xs opacity-50 italic">Nenhum exercício.</div>` : 
-                    workout.exercises.map((ex, idx) => `
-                        <div class="flex flex-col sm:flex-row gap-2 p-2 items-start sm:items-center border-b last:border-0 border-opacity-10" style="border-color: var(--border-color)">
-                            <div class="flex-1 w-full sm:w-auto">
-                                <div class="text-[9px] opacity-60 uppercase">${ex.category}</div>
-                                <div class="text-sm font-medium leading-tight">${ex.name}</div>
-                            </div>
-                            <div class="flex flex-wrap gap-1.5 w-full sm:w-auto">
-                                <input type="text" value="${ex.sets}" onchange="updateExercise('${workout.id}', ${idx}, 'sets', this.value)" class="input-field w-12 rounded px-1 py-1 text-xs text-center" placeholder="Sér">
-                                <span class="self-center opacity-50 text-xs">x</span>
-                                <input type="text" value="${ex.reps}" onchange="updateExercise('${workout.id}', ${idx}, 'reps', this.value)" class="input-field w-16 rounded px-1 py-1 text-xs text-center" placeholder="Reps">
-                                <select onchange="updateExercise('${workout.id}', ${idx}, 'technique', this.value)" class="input-field w-24 rounded px-1 py-1 text-xs">
-                                    ${dbTechniques.map(t => `<option value="${t}" ${ex.technique === t ? 'selected' : ''}>${t}</option>`).join('')}
-                                </select>
-                                <input type="text" value="${ex.obs}" onchange="updateExercise('${workout.id}', ${idx}, 'obs', this.value)" class="input-field flex-1 sm:w-32 rounded px-1 py-1 text-xs" placeholder="Obs...">
-                            </div>
-                            <div class="flex items-center gap-1 justify-end mt-1 sm:mt-0">
-                                <button onclick="moveExercise('${workout.id}', ${idx}, 'up')" class="p-1 rounded opacity-50 hover:opacity-100"><i class="fas fa-chevron-up"></i></button>
-                                <button onclick="moveExercise('${workout.id}', ${idx}, 'down')" class="p-1 rounded opacity-50 hover:opacity-100"><i class="fas fa-chevron-down"></i></button>
-                                <button onclick="removeExercise('${workout.id}', ${idx})" class="text-red-500 p-1 rounded"><i class="fas fa-trash"></i></button>
-                            </div>
-                        </div>
-                    `).join('');
-
-                container.insertAdjacentHTML('beforeend', `
-                    <div class="card rounded-lg overflow-hidden shadow-sm">
-                        <div class="p-3 border-b flex justify-between items-center bg-black bg-opacity-5" style="border-color: var(--border-color);">
-                            <input type="text" value="${workout.title}" onchange="updateWorkoutTitle('${workout.id}', this.value)" class="input-field bg-transparent font-bold text-base w-2/3 px-1 rounded">
-                            <button onclick="removeWorkout('${workout.id}')" class="text-xs text-red-500 hover:text-white hover:bg-red-500 px-2 py-1 rounded transition"><i class="fas fa-trash"></i> Excluir Dia</button>
-                        </div>
-                        <div class="p-0">${exercisesHtml}</div>
-                        <div class="p-2 border-t" style="border-color: var(--border-color)">
-                            <button onclick="openModal('${workout.id}')" class="w-full btn-primary py-1.5 rounded text-xs font-medium border border-dashed border-opacity-50"><i class="fas fa-plus"></i> Inserir Exercício</button>
-                        </div>
-                    </div>
-                `);
-            });
-        }
-
-        // --- MODAL ---
-        function openModal(wId) { state.activeModalWorkoutId = wId; document.getElementById('exercise-modal').classList.remove('hidden'); renderModalCategories(); renderModalExercises(); }
-        function closeModal() { document.getElementById('exercise-modal').classList.add('hidden'); state.activeModalWorkoutId = null; }
-        function renderModalCategories() {
-            document.getElementById('modal-categories').innerHTML = Object.keys(dbCategories).map(cat => `
-                <button onclick="setModalCategory('${cat}')" class="w-full text-left px-3 py-2 rounded text-xs font-medium transition ${state.activeCategory === cat ? 'bg-primary text-white' : 'hover:bg-black hover:bg-opacity-10'}">${cat}</button>
-            `).join('');
-        }
-        function setModalCategory(cat) { state.activeCategory = cat; renderModalCategories(); renderModalExercises(); }
-        function renderModalExercises() {
-            const exList = dbCategories[state.activeCategory];
-            const isCardio = state.activeCategory === "🫀 CARDIO";
-            document.getElementById('modal-exercises').innerHTML = `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                ${exList.map(ex => `<button onclick="addExercise('${ex}', ${isCardio})" class="card p-2 rounded text-left text-xs font-medium border hover:border-primary transition flex justify-between"><span>${ex}</span><i class="fas fa-plus text-primary"></i></button>`).join('')}
-            </div>`;
-        }
-        function addExercise(name, isCardio) {
-            state.workouts.find(w => w.id === state.activeModalWorkoutId).exercises.push({
-                category: state.activeCategory, name: name, sets: isCardio ? '1' : '3', reps: isCardio ? '-' : '10 a 12', technique: 'Normal', obs: ''
-            });
-            renderWorkouts();
-        }
-
-        // --- LOCAL STORAGE (MEMÓRIA) ---
-        function loadProfData() {
-            document.getElementById('prof-name').value = localStorage.getItem('powfit_prof_name') || '';
-            document.getElementById('prof-cref').value = localStorage.getItem('powfit_prof_cref') || '';
-            document.getElementById('prof-state').value = localStorage.getItem('powfit_prof_state') || '';
-        }
+        // --- DADOS DO PROFISSIONAL ---
         function saveProfData() {
-            localStorage.setItem('powfit_prof_name', document.getElementById('prof-name').value);
-            localStorage.setItem('powfit_prof_cref', document.getElementById('prof-cref').value);
-            localStorage.setItem('powfit_prof_state', document.getElementById('prof-state').value);
+            const data = {
+                name: document.getElementById('prof-name').value,
+                cref: document.getElementById('prof-cref').value,
+                state: document.getElementById('prof-state').value
+            };
+            localStorage.setItem('powfit_prof', JSON.stringify(data));
+        }
+        function loadProfData() {
+            const data = JSON.parse(localStorage.getItem('powfit_prof') || '{}');
+            if(data.name) document.getElementById('prof-name').value = data.name;
+            if(data.cref) document.getElementById('prof-cref').value = data.cref;
+            if(data.state) document.getElementById('prof-state').value = data.state;
         }
 
-        function getSavedRecords() { return JSON.parse(localStorage.getItem('powfit_records') || '[]'); }
-        
-        function savePrescription() {
-            saveProfData(); // Salva prof sempre
-            
-            const currentId = document.getElementById('record-id').value || generateId();
-            const name = document.getElementById('stu-name').value || 'Sem Nome';
-            
-            const record = {
-                id: currentId,
-                date: new Date().toISOString(),
+        // --- SALVAMENTO DE FICHAS DE ALUNOS ---
+        function getSavedSheets() {
+            return JSON.parse(localStorage.getItem('powfit_sheets') || '[]');
+        }
+
+        function saveCurrentSheetToMemory() {
+            const sheet = {
+                id: currentSheetId,
+                date: new Date().toLocaleDateString('pt-BR'),
                 student: {
-                    name: name,
+                    name: document.getElementById('stu-name').value || 'Sem Nome',
                     age: document.getElementById('stu-age').value,
                     weight: document.getElementById('stu-weight').value,
                     height: document.getElementById('stu-height').value,
@@ -564,180 +451,328 @@
                     recs: document.getElementById('stu-recs').value,
                     health: Array.from(document.querySelectorAll('.health-cb:checked')).map(cb => cb.value)
                 },
-                workouts: JSON.parse(JSON.stringify(state.workouts))
+                workouts: state.workouts
             };
 
-            let records = getSavedRecords();
-            const existingIndex = records.findIndex(r => r.id === currentId);
-            if(existingIndex >= 0) records[existingIndex] = record;
-            else records.push(record);
-
-            localStorage.setItem('powfit_records', JSON.stringify(records));
-            document.getElementById('record-id').value = currentId; // seta id atual
+            let sheets = getSavedSheets();
+            const index = sheets.findIndex(s => s.id === currentSheetId);
+            if(index >= 0) sheets[index] = sheet;
+            else sheets.push(sheet);
+            
+            localStorage.setItem('powfit_sheets', JSON.stringify(sheets));
+            renderSavedSheets();
         }
 
-        function openRecords() {
-            const records = getSavedRecords();
-            const container = document.getElementById('records-container');
-            if(records.length === 0) {
-                container.innerHTML = '<p class="text-center opacity-50 py-10">Nenhuma ficha salva na memória.</p>';
-            } else {
-                records.sort((a,b) => new Date(b.date) - new Date(a.date));
-                container.innerHTML = records.map(r => `
-                    <div class="card p-4 rounded-lg flex justify-between items-center border-l-4 border-l-primary">
+        function loadSheet(id) {
+            const sheet = getSavedSheets().find(s => s.id === id);
+            if(!sheet) return;
+
+            currentSheetId = sheet.id;
+            document.getElementById('editor-title').innerText = `Editando Ficha: ${sheet.student.name}`;
+            
+            // Popula form
+            document.getElementById('stu-name').value = sheet.student.name;
+            document.getElementById('stu-age').value = sheet.student.age;
+            document.getElementById('stu-weight').value = sheet.student.weight;
+            document.getElementById('stu-height').value = sheet.student.height;
+            document.getElementById('stu-gender').value = sheet.student.gender;
+            document.getElementById('stu-level').value = sheet.student.level;
+            document.getElementById('stu-objective').value = sheet.student.objective;
+            document.getElementById('stu-freq').value = sheet.student.freq;
+            document.getElementById('stu-validity').value = sheet.student.validity;
+            document.getElementById('stu-recs').value = sheet.student.recs;
+            
+            document.querySelectorAll('.health-cb').forEach(cb => {
+                cb.checked = sheet.student.health.includes(cb.value);
+            });
+
+            state.workouts = sheet.workouts;
+            calculateIMC();
+            changeTheme();
+            toggleView('editor');
+        }
+
+        function deleteSheet(id) {
+            if(confirm('Tem certeza que deseja excluir esta ficha da memória?')) {
+                let sheets = getSavedSheets().filter(s => s.id !== id);
+                localStorage.setItem('powfit_sheets', JSON.stringify(sheets));
+                if(currentSheetId === id) startNewSheet();
+                renderSavedSheets();
+            }
+        }
+
+        function startNewSheet() {
+            currentSheetId = generateId();
+            document.getElementById('editor-title').innerText = `Criando Nova Ficha`;
+            document.getElementById('stu-name').value = '';
+            document.getElementById('stu-age').value = '';
+            document.getElementById('stu-weight').value = '';
+            document.getElementById('stu-height').value = '';
+            document.getElementById('stu-recs').value = '';
+            document.querySelectorAll('.health-cb').forEach(cb => cb.checked = false);
+            calculateIMC();
+            state.workouts = [{ id: generateId(), title: "Treino Segunda", exercises: [] }];
+            toggleView('editor');
+        }
+
+        function renderSavedSheets() {
+            const container = document.getElementById('saved-sheets-container');
+            const sheets = getSavedSheets();
+            
+            if(sheets.length === 0) {
+                container.innerHTML = `<div class="col-span-full p-8 text-center opacity-50 border border-dashed rounded-xl" style="border-color: var(--border-color)">Nenhuma ficha salva no sistema ainda.</div>`;
+                return;
+            }
+
+            container.innerHTML = sheets.map(s => `
+                <div class="card p-4 rounded-xl shadow-sm flex flex-col gap-3">
+                    <div class="flex justify-between items-start">
                         <div>
-                            <h4 class="font-bold">${r.student.name}</h4>
-                            <p class="text-xs opacity-70">Salvo em: ${new Date(r.date).toLocaleDateString('pt-BR')} - Obj: ${r.student.objective}</p>
+                            <h3 class="font-bold text-lg">${s.student.name}</h3>
+                            <p class="text-xs opacity-70">Salvo em: ${s.date} | Objetivo: ${s.student.objective}</p>
                         </div>
-                        <div class="flex gap-2">
-                            <button onclick="loadRecord('${r.id}')" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1.5 rounded text-xs transition"><i class="fas fa-edit"></i> Editar</button>
-                            <button onclick="deleteRecord('${r.id}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded text-xs transition"><i class="fas fa-trash"></i></button>
-                        </div>
+                        <span class="bg-primary bg-opacity-20 text-primary px-2 py-1 rounded text-xs font-bold">${s.workouts.length} Treinos</span>
                     </div>
-                `).join('');
-            }
-            document.getElementById('records-modal').classList.remove('hidden');
-        }
-
-        function closeRecords() { document.getElementById('records-modal').classList.add('hidden'); }
-
-        function deleteRecord(id) {
-            if(confirm("Excluir esta ficha permanentemente?")) {
-                let records = getSavedRecords().filter(r => r.id !== id);
-                localStorage.setItem('powfit_records', JSON.stringify(records));
-                if(document.getElementById('record-id').value === id) document.getElementById('record-id').value = '';
-                openRecords();
-            }
-        }
-
-        function loadRecord(id) {
-            const record = getSavedRecords().find(r => r.id === id);
-            if(record) {
-                document.getElementById('record-id').value = record.id;
-                document.getElementById('stu-name').value = record.student.name;
-                document.getElementById('stu-age').value = record.student.age;
-                document.getElementById('stu-weight').value = record.student.weight;
-                document.getElementById('stu-height').value = record.student.height;
-                document.getElementById('stu-gender').value = record.student.gender;
-                document.getElementById('stu-level').value = record.student.level;
-                document.getElementById('stu-objective').value = record.student.objective;
-                document.getElementById('stu-freq').value = record.student.freq;
-                document.getElementById('stu-validity').value = record.student.validity;
-                document.getElementById('stu-recs').value = record.student.recs;
-                
-                // Health boxes
-                document.querySelectorAll('.health-cb').forEach(cb => cb.checked = false);
-                if(record.student.health) {
-                    record.student.health.forEach(h => {
-                        const cb = document.querySelector(`.health-cb[value="${h}"]`);
-                        if(cb) cb.checked = true;
-                    });
-                }
-                
-                state.workouts = record.workouts;
-                changeTheme();
-                calculateIMC();
-                renderWorkouts();
-                closeRecords();
-            }
+                    <div class="flex gap-2 mt-auto pt-3 border-t border-opacity-20" style="border-color: var(--border-color)">
+                        <button onclick="loadSheet('${s.id}')" class="flex-1 bg-black bg-opacity-10 hover:bg-primary hover:text-white transition py-1.5 rounded text-sm font-medium"><i class="fas fa-edit"></i> Editar</button>
+                        <button onclick="deleteSheet('${s.id}')" class="px-3 py-1.5 rounded bg-red-500 bg-opacity-10 text-red-500 hover:bg-red-500 hover:text-white transition"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `).join('');
         }
 
 
-        // --- IMPRESSÃO A4 (LADO A LADO) ---
-        function generatePrint() {
-            savePrescription(); // Salva automaticamente ao imprimir
+        // --- LÓGICA DE INTERFACE ---
+        function changeTheme() {
+            document.body.setAttribute('data-theme', document.getElementById('stu-gender').value);
+        }
 
-            const profName = document.getElementById('prof-name').value || 'Não informado';
-            const profCref = document.getElementById('prof-cref').value || '-';
-            const profState = document.getElementById('prof-state').value || '-';
-
+        function calculateIMC() {
             const w = parseFloat(document.getElementById('stu-weight').value);
             const h = parseFloat(document.getElementById('stu-height').value);
-            let imcStr = "-"; if(w>0 && h>0) imcStr = (w / (h * h)).toFixed(1);
+            const display = document.getElementById('imc-display');
 
+            if (w > 0 && h > 0) {
+                const imc = (w / (h * h)).toFixed(1);
+                let classif = imc < 18.5 ? "Abaixo" : imc < 24.9 ? "Normal" : imc < 29.9 ? "Sobrepeso" : "Obesidade";
+                display.innerHTML = `<span class="bg-primary bg-opacity-20 text-primary px-3 py-1 rounded text-xs font-bold border border-primary border-opacity-30">IMC: ${imc} (${classif})</span>`;
+            } else { display.innerHTML = ''; }
+        }
+
+        function renderHealthOptions() {
+            const container = document.getElementById('health-container');
+            container.innerHTML = Object.keys(healthData).map(opt => `
+                <label class="flex items-center space-x-2 cursor-pointer p-1.5 rounded hover:bg-black hover:bg-opacity-5 transition border border-transparent">
+                    <input type="checkbox" value="${opt}" class="health-cb rounded border-gray-400 text-primary focus:ring-primary w-3.5 h-3.5">
+                    <span class="font-medium">${opt}</span>
+                </label>
+            `).join('');
+        }
+
+        // --- TREINOS E EXERCÍCIOS ---
+        function getNextDayTitle() {
+            const count = state.workouts.length;
+            return defaultDays[count % defaultDays.length];
+        }
+
+        function addWorkout() {
+            state.workouts.push({ id: generateId(), title: getNextDayTitle(), exercises: [] });
+            renderWorkouts();
+        }
+
+        function duplicateWorkout(id) {
+            const w = state.workouts.find(w => w.id === id);
+            if(w) {
+                const newW = JSON.parse(JSON.stringify(w));
+                newW.id = generateId();
+                newW.title = newW.title + " (Cópia)";
+                state.workouts.push(newW);
+                renderWorkouts();
+            }
+        }
+
+        function removeWorkout(id) {
+            if(confirm("Remover este treino inteiro?")) {
+                state.workouts = state.workouts.filter(w => w.id !== id);
+                renderWorkouts();
+            }
+        }
+
+        function updateWorkoutTitle(id, val) {
+            const w = state.workouts.find(w => w.id === id);
+            if(w) w.title = val;
+        }
+
+        function moveExercise(wId, idx, dir) {
+            const w = state.workouts.find(w => w.id === wId);
+            if (dir === 'up' && idx > 0) [w.exercises[idx], w.exercises[idx-1]] = [w.exercises[idx-1], w.exercises[idx]];
+            else if (dir === 'down' && idx < w.exercises.length-1) [w.exercises[idx], w.exercises[idx+1]] = [w.exercises[idx+1], w.exercises[idx]];
+            renderWorkouts();
+        }
+
+        function removeExercise(wId, idx) {
+            state.workouts.find(w => w.id === wId).exercises.splice(idx, 1);
+            renderWorkouts();
+        }
+
+        function updateExercise(wId, idx, field, val) {
+            state.workouts.find(w => w.id === wId).exercises[idx][field] = val;
+        }
+
+        function renderWorkouts() {
+            const container = document.getElementById('workouts-container');
+            container.innerHTML = '';
+
+            state.workouts.forEach(workout => {
+                let exercisesHtml = workout.exercises.length === 0 ? 
+                    `<div class="text-center p-4 text-xs opacity-50 italic">Sem exercícios adicionados.</div>` : 
+                    workout.exercises.map((ex, idx) => `
+                        <div class="flex flex-col lg:flex-row gap-2 p-2 items-start lg:items-center border-b last:border-0 border-opacity-10" style="border-color: var(--border-color)">
+                            <div class="flex lg:flex-col gap-1 hidden lg:flex">
+                                <button onclick="moveExercise('${workout.id}', ${idx}, 'up')" class="text-[10px] p-1 hover:bg-black hover:bg-opacity-10 rounded"><i class="fas fa-chevron-up"></i></button>
+                                <button onclick="moveExercise('${workout.id}', ${idx}, 'down')" class="text-[10px] p-1 hover:bg-black hover:bg-opacity-10 rounded"><i class="fas fa-chevron-down"></i></button>
+                            </div>
+                            <div class="flex-1 min-w-[200px]">
+                                <div class="text-[9px] opacity-60 uppercase">${ex.category}</div>
+                                <div class="text-sm font-medium leading-tight">${ex.name}</div>
+                            </div>
+                            <div class="flex flex-wrap gap-1 w-full lg:w-auto">
+                                <input type="text" value="${ex.sets}" onchange="updateExercise('${workout.id}', ${idx}, 'sets', this.value)" class="input-field w-12 rounded px-1 py-1 text-xs text-center" placeholder="Séries">
+                                <span class="self-center opacity-50 text-xs">x</span>
+                                <input type="text" value="${ex.reps}" onchange="updateExercise('${workout.id}', ${idx}, 'reps', this.value)" class="input-field w-16 rounded px-1 py-1 text-xs text-center" placeholder="Reps">
+                                <select onchange="updateExercise('${workout.id}', ${idx}, 'technique', this.value)" class="input-field w-24 rounded px-1 py-1 text-xs">
+                                    ${dbTechniques.map(t => `<option value="${t}" ${ex.technique === t ? 'selected' : ''}>${t}</option>`).join('')}
+                                </select>
+                                <input type="text" value="${ex.obs}" onchange="updateExercise('${workout.id}', ${idx}, 'obs', this.value)" class="input-field flex-1 lg:w-32 rounded px-2 py-1 text-xs" placeholder="Obs...">
+                            </div>
+                            <div class="flex items-center gap-1 w-full lg:w-auto justify-end">
+                                <button onclick="removeExercise('${workout.id}', ${idx})" class="text-red-500 p-1.5 rounded hover:bg-red-500 hover:bg-opacity-10 transition"><i class="fas fa-trash text-xs"></i></button>
+                            </div>
+                        </div>
+                    `).join('');
+
+                container.insertAdjacentHTML('beforeend', `
+                    <div class="card rounded-xl overflow-hidden shadow-sm border-l-2" style="border-left-color: var(--primary)">
+                        <div class="p-3 border-b flex justify-between items-center bg-black bg-opacity-5" style="border-color: var(--border-color)">
+                            <div class="flex items-center gap-2 flex-1">
+                                <i class="fas fa-calendar-day text-primary"></i>
+                                <input type="text" value="${workout.title}" onchange="updateWorkoutTitle('${workout.id}', this.value)" class="input-field bg-transparent font-bold text-md w-full px-1 py-0.5 rounded border-transparent">
+                            </div>
+                            <div class="flex gap-1">
+                                <button onclick="duplicateWorkout('${workout.id}')" class="p-1.5 rounded hover:bg-black hover:bg-opacity-10"><i class="fas fa-copy text-xs"></i></button>
+                                <button onclick="removeWorkout('${workout.id}')" class="p-1.5 text-red-500 rounded hover:bg-red-500 hover:text-white"><i class="fas fa-trash text-xs"></i></button>
+                            </div>
+                        </div>
+                        <div class="p-0">${exercisesHtml}</div>
+                        <div class="p-2 border-t" style="border-color: var(--border-color)">
+                            <button onclick="openModal('${workout.id}')" class="w-full btn-primary py-1.5 rounded text-xs font-medium bg-opacity-10 text-primary border border-primary border-dashed hover:border-solid transition">
+                                + Adicionar Exercício
+                            </button>
+                        </div>
+                    </div>
+                `);
+            });
+        }
+
+        // --- MODAL ---
+        function openModal(wId) {
+            state.activeModalWorkoutId = wId;
+            document.getElementById('exercise-modal').classList.remove('hidden');
+            renderModalCategories();
+            renderModalExercises();
+        }
+        function closeModal() { document.getElementById('exercise-modal').classList.add('hidden'); }
+
+        function renderModalCategories() {
+            document.getElementById('modal-categories').innerHTML = Object.keys(dbCategories).map(cat => `
+                <button onclick="state.activeCategory='${cat}'; renderModalCategories(); renderModalExercises();" class="w-full text-left px-3 py-2 rounded text-xs font-medium transition ${state.activeCategory === cat ? 'bg-primary text-white' : 'hover:bg-black hover:bg-opacity-10'}">${cat}</button>
+            `).join('');
+        }
+
+        function renderModalExercises() {
+            const isCardio = state.activeCategory === "🫀 CARDIO";
+            document.getElementById('modal-exercises').innerHTML = `<div class="grid grid-cols-1 sm:grid-cols-2 gap-2">` + 
+                dbCategories[state.activeCategory].map(ex => `
+                    <button onclick="addExercise('${ex}', ${isCardio})" class="card p-2.5 rounded text-left text-xs font-medium border hover:border-primary transition flex justify-between group">
+                        <span>${ex}</span> <i class="fas fa-plus text-primary opacity-0 group-hover:opacity-100"></i>
+                    </button>
+                `).join('') + `</div>`;
+        }
+
+        function addExercise(name, isCardio) {
+            const w = state.workouts.find(w => w.id === state.activeModalWorkoutId);
+            if(w) {
+                w.exercises.push({ category: state.activeCategory, name: name, sets: isCardio?'1':'3', reps: isCardio?'-':'10 a 12', technique: '-', obs: '' });
+                renderWorkouts();
+            }
+        }
+
+        // --- IMPRESSÃO PLANILHA ---
+        function generatePrint() {
+            // Salva na memória sempre que for imprimir
+            saveCurrentSheetToMemory();
+
+            const pName = document.getElementById('prof-name').value || 'Não informado';
+            const pCref = document.getElementById('prof-cref').value || 'Não informado';
+            const pState = document.getElementById('prof-state').value || '-';
+            const sName = document.getElementById('stu-name').value || 'Aluno não identificado';
+            const sAge = document.getElementById('stu-age').value || '-';
+            const sWeight = document.getElementById('stu-weight').value || '-';
+            const sHeight = document.getElementById('stu-height').value || '-';
+            const w = parseFloat(sWeight); const h = parseFloat(sHeight);
+            const imcStr = (w>0 && h>0) ? (w/(h*h)).toFixed(1) : '-';
+            
             const obj = document.getElementById('stu-objective').value;
-            const recsText = document.getElementById('stu-recs').value;
-            const healthBoxes = Array.from(document.querySelectorAll('.health-cb:checked')).map(cb => cb.value);
+            const health = Array.from(document.querySelectorAll('.health-cb:checked')).map(cb => cb.value);
 
             let html = `
-                <div class="print-header">
-                    <div>
-                        <h1 class="print-prof-title">PRESCRIÇÃO FEITA POR PERSONAL TRAINER: ${profName}</h1>
-                        <p class="print-prof-subtitle">CREF: ${profCref} - ESTADO: ${profState}</p>
-                    </div>
-                    <div style="text-align: right; font-size: 9px; font-weight: bold;">
-                        Data: ${new Date().toLocaleDateString('pt-BR')} | Validade: ${document.getElementById('stu-validity').value}
-                    </div>
+                <div class="print-header-box">
+                    <h1>Prescrição de Treinamento Individualizada</h1>
+                    <p>PERSONAL TRAINER: ${pName}</p>
+                    <p style="font-weight: normal; font-size: 11px;">CREF: ${pCref} - Estado: ${pState}</p>
                 </div>
 
-                <div class="print-grid">
-                    <div><strong>Aluno(a):</strong> ${document.getElementById('stu-name').value || '-'}</div>
-                    <div><strong>Objetivo:</strong> ${obj}</div>
-                    <div><strong>Nível:</strong> ${document.getElementById('stu-level').value}</div>
-                    <div><strong>Frequência:</strong> ${document.getElementById('stu-freq').value}</div>
-                    <div><strong>Idade:</strong> ${document.getElementById('stu-age').value || '-'} anos</div>
-                    <div><strong>Peso:</strong> ${document.getElementById('stu-weight').value || '-'} kg</div>
-                    <div><strong>Altura:</strong> ${document.getElementById('stu-height').value || '-'} m</div>
-                    <div><strong>IMC:</strong> ${imcStr}</div>
-                </div>
+                <table class="print-student-table">
+                    <tr>
+                        <th>Aluno(a)</th><td colspan="3"><strong>${sName}</strong></td>
+                        <th>Objetivo</th><td>${obj}</td>
+                    </tr>
+                    <tr>
+                        <th>Idade / Gênero</th><td>${sAge} anos / ${document.getElementById('stu-gender').value}</td>
+                        <th>Peso / Altura</th><td>${sWeight} kg / ${sHeight} m (IMC: ${imcStr})</td>
+                        <th>Nível / Freq.</th><td>${document.getElementById('stu-level').value} / ${document.getElementById('stu-freq').value}</td>
+                    </tr>
+                </table>
             `;
 
-            // Diretrizes Automáticas
-            if (objectiveData[obj] || healthBoxes.length > 0) {
-                html += `<div class="print-guidelines"><h4>Diretrizes de Perfil (Automático)</h4><ul>`;
+            if(objectiveData[obj] || health.length > 0) {
+                html += `<div class="print-guidelines"><h4>DIRETRIZES DE SAÚDE E OBJETIVO</h4><ul>`;
                 html += `<li><strong>${obj}:</strong> ${objectiveData[obj]}</li>`;
-                healthBoxes.forEach(k => {
-                    const cleanKey = k.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{FE0F}]/gu, '').trim();
-                    html += `<li><strong>${cleanKey}:</strong> ${healthData[k]}</li>`;
-                });
+                health.forEach(h => html += `<li><strong>${h.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{FE0F}]/gu, '').trim()}:</strong> ${healthData[h]}</li>`);
                 html += `</ul></div>`;
             }
 
-            // CONTAINER FLEX PARA DIAS LADO A LADO
-            html += `<div class="print-workouts-container">`;
-            
             state.workouts.forEach(w => {
-                html += `
-                    <div class="print-workout">
-                        <h3>${w.title}</h3>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th style="width: 45%">Exercício</th>
-                                    <th style="width: 15%">S x R</th>
-                                    <th style="width: 15%">Técn.</th>
-                                    <th style="width: 25%">Obs</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                `;
-                if (w.exercises.length === 0) {
-                    html += `<tr><td colspan="4" style="text-align:center; color:#6b7280;">Vazio</td></tr>`;
-                } else {
-                    w.exercises.forEach(ex => {
-                        const tech = ex.technique === 'Normal' ? '-' : ex.technique;
-                        html += `
-                            <tr>
-                                <td><strong>${ex.name}</strong></td>
-                                <td>${ex.sets}x${ex.reps}</td>
-                                <td>${tech}</td>
-                                <td>${ex.obs || '-'}</td>
-                            </tr>
-                        `;
-                    });
-                }
+                html += `<div class="print-workout"><h3>${w.title}</h3><table class="workout-table">
+                    <thead><tr><th>Exercício</th><th style="width:10%">Séries</th><th style="width:15%">Reps</th><th style="width:10%">Técnica</th><th>Observações</th></tr></thead><tbody>`;
+                
+                if(w.exercises.length === 0) html += `<tr><td colspan="5" style="text-align:center; color:#666;">Sem exercícios cadastrados</td></tr>`;
+                w.exercises.forEach(ex => {
+                    html += `<tr><td>${ex.name}</td><td>${ex.sets}</td><td>${ex.reps}</td><td>${ex.technique}</td><td>${ex.obs||'-'}</td></tr>`;
+                });
                 html += `</tbody></table></div>`;
             });
-            html += `</div>`; // Fechar flex container
 
-            if(recsText.trim()) {
-                html += `<div class="print-recommendations"><strong>Recomendações do Personal:</strong> ${recsText}</div>`;
+            const recs = document.getElementById('stu-recs').value;
+            if(recs.trim()) {
+                html += `<div class="print-manual-recs"><h4>Observações Gerais do Profissional</h4><p style="white-space:pre-wrap; margin:0; font-size:11px;">${recs}</p></div>`;
             }
 
             document.getElementById('print-area').innerHTML = html;
-            setTimeout(() => window.print(), 300);
+            setTimeout(() => window.print(), 250);
         }
 
+        // Boot
         init();
     </script>
 </body>
